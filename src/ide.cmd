@@ -1,0 +1,1 @@
+remixd -s %~dp0 -u https://remix.ethereum.org/#optimize=false
