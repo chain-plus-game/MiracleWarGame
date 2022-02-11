@@ -106,3 +106,4 @@ src/contracts/package-lock.json
 # 合约相关
 artifacts/
 src/contracts/.deps/
+src/package-lock.json
