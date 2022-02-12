@@ -22,9 +22,21 @@ contract MiracleCard is ERC1155 {
     // 购买卡包所需金额
     uint256 public buyCardPackCast = 100000000000000;
 
-    MiracleDust public MiracleDustToken;
+    MiracleDust private MiracleDustToken;
 
     mapping(address => bool) private _trustedAddress;
+
+    // 随机卡包的卡面
+    bytes32[] public randomPackUris;
+
+    // 创建卡牌得最大星级
+    uint256 public maxCardCreateStar = 10;
+
+    // 卡包卡最大星级
+    uint256 public maxBuyCardStar = 5;
+
+    // 卡包一次数量
+    uint256 public cardPackBuyerNum = 3;
 
     /** @dev Use ERC-1155 metadata standard for your JSON file & use hexadecimal of your token ID in _file_name.json */
 
@@ -44,6 +56,10 @@ contract MiracleCard is ERC1155 {
             _owner,
             owners
         );
+    }
+
+    function getMiracleDustTokenAddress() public view returns (address) {
+        return address(MiracleDustToken);
     }
 
     function setCreateCardCast(uint256 _cast) public {
@@ -100,6 +116,38 @@ contract MiracleCard is ERC1155 {
     function setEntrysLength(uint256 newEntrysLength) public {
         require(msg.sender == _owner, "This method must called by owner");
         _entrysLength = newEntrysLength;
+    }
+
+    function setRandomPackUris(bytes32[] memory randomUris) public {
+        require(
+            isTrustedAddress(msg.sender),
+            "This method must called by trusted"
+        );
+        randomPackUris = randomUris;
+    }
+
+    function setMaxCardCreateStar(uint256 _max) public {
+        require(
+            isTrustedAddress(msg.sender),
+            "This method must called by trusted"
+        );
+        maxCardCreateStar = _max;
+    }
+
+    function setMaxBuyCardStar(uint256 _max) public {
+        require(
+            isTrustedAddress(msg.sender),
+            "This method must called by trusted"
+        );
+        maxBuyCardStar = _max;
+    }
+
+    function setCardPackBuyerNum(uint256 _num) public {
+        require(
+            isTrustedAddress(msg.sender),
+            "This method must called by trusted"
+        );
+        cardPackBuyerNum = _num;
     }
 
     function transferFrom(
@@ -164,7 +212,8 @@ contract MiracleCard is ERC1155 {
                 tokenId,
                 cardTypes,
                 getRandomCardEntrys(cardEntrys),
-                ""
+                "",
+                maxCardCreateStar
             );
         } else {
             _createCard(
@@ -172,7 +221,8 @@ contract MiracleCard is ERC1155 {
                 tokenId,
                 cardTypes,
                 getRandomCardEntrys(_entrys),
-                ""
+                "",
+                maxCardCreateStar
             );
         }
         emit CardCreated(msg.sender, tokenId);

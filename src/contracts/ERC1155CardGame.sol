@@ -38,6 +38,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
+    uint256 randNonce = 0;
 
     /*
      *     bytes4(keccak256('balanceOf(address,uint256)')) == 0x00fdd58e
@@ -647,7 +648,8 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256 id,
         uint256[] memory cardType,
         uint256[] memory cardEntrys,
-        bytes memory data
+        bytes32 cardUri,
+        uint256 starMax
     ) internal virtual {
         require(account != address(0), "ERC1155: mint to the zero address");
 
@@ -659,14 +661,14 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             account,
             _asSingletonArray(id),
             _asSingletonArray(1),
-            data
+            ""
         );
 
         _balances[id][account] = _balances[id][account].add(1);
 
         _holderTokens[account].add(id);
-        uint256 star = randomCardStar();
-        _tokenOwners.set(id, star, 100, cardType, cardEntrys, "", account);
+        uint256 star = randomCardStar(starMax);
+        _tokenOwners.set(id, star, 100, cardType, cardEntrys, cardUri, account);
         ////////////////
         emit TransferSingle(operator, address(0), account, id, 1);
 
@@ -676,7 +678,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             account,
             id,
             1,
-            data
+            ""
         );
     }
 
@@ -727,22 +729,26 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
     }
 
-    function random() internal view returns (uint256) {
+    function randomCardStar(uint256 max) internal returns (uint256) {
         uint256 randomHash = uint256(
-            keccak256(abi.encodePacked(block.difficulty, block.timestamp))
+            keccak256(
+                abi.encodePacked(
+                    uint256(uint160(msg.sender)),
+                    block.difficulty,
+                    block.timestamp,
+                    randNonce
+                )
+            )
         );
-        // uint randomHash = uint(keccak256(block.difficulty, block.timestamp));
-        return randomHash % 1000;
-    }
-
-    function randomCardStar() internal returns (uint256) {
-        uint256 randomHash = uint256(
-            keccak256(abi.encodePacked(block.difficulty, block.timestamp))
-        );
-        uint256 firstRandom = (randomHash % 1000) + msg.value / 100000000000000;
-        if (firstRandom > 1000) {
-            firstRandom = 1000;
+        uint256 maxVal = max * 100;
+        uint256 firstRandom = (randomHash % maxVal) +
+            msg.value /
+            100000000000000;
+        if (firstRandom > maxVal) {
+            firstRandom = maxVal;
         }
-        return firstRandom / 100;
+        uint256 ramMax = max * 10;
+        randNonce++;
+        return firstRandom / ramMax;
     }
 }
