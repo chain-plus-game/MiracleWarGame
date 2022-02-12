@@ -12,7 +12,6 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-
 /**
  *
  * @dev Implementation of the basic standard multi-token.
@@ -99,10 +98,10 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         return _balances[id][account];
     }
 
-    function allBalance(address account) 
-    public 
-    view 
-    returns (bytes32[] memory)
+    function allBalance(address account)
+        public
+        view
+        returns (bytes32[] memory)
     {
         require(
             account != address(0),
@@ -124,7 +123,8 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     }
 
     function _ownerOf(uint256 tokenId) internal view returns (address) {
-        return _tokenOwners.getOwner(tokenId, "owner query for nonexistent token");
+        return
+            _tokenOwners.getOwner(tokenId, "owner query for nonexistent token");
     }
 
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids)
@@ -212,7 +212,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             "ERC1155: insufficient balance for transfer"
         );
         _balances[id][to] = _balances[id][to].add(amount);
-        
+
         _holderTokens[from].remove(id);
         _holderTokens[to].add(id);
 
@@ -256,7 +256,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
                 "ERC1155: insufficient balance for transfer"
             );
             _balances[id][to] = _balances[id][to].add(amount);
-            
+
             _holderTokens[from].remove(id);
             _holderTokens[to].add(id);
 
@@ -329,13 +329,13 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
 
         _balances[id][account] = _balances[id][account].add(amount);
-       
+
         _holderTokens[account].add(id);
-        uint[] memory cardType = new uint[](1);
+        uint256[] memory cardType = new uint256[](1);
         cardType[0] = 1;
-        uint[] memory cardEntrys = new uint[](1);
+        uint256[] memory cardEntrys = new uint256[](1);
         cardEntrys[0] = 1;
-        _tokenOwners.set(id,10,100,cardType,cardEntrys,"",account);
+        _tokenOwners.set(id, 10, 100, cardType, cardEntrys, "", account);
         ////////////////
         emit TransferSingle(operator, address(0), account, id, amount);
 
@@ -376,7 +376,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
         for (uint256 i = 0; i < ids.length; i++) {
             _balances[ids[i]][to] = amounts[i].add(_balances[ids[i]][to]);
-            
+
             _holderTokens[to].add(ids[i]);
             _tokenOwners.setTokenTo(ids[i], to);
             ////////////////
@@ -563,20 +563,25 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         return array;
     }
 
-      function getToken(uint256 tokenId) public view 
-      returns (        
-        uint256 id,
-        uint star,
-        // 剩余粉尘
-        uint tokenVal,
-        uint[] memory cardType,
-        // 词条
-        uint[] memory cardEntrys,
-        bytes32 tokenUri,
-        address ownerAddress
-    )
+    function getToken(uint256 tokenId)
+        public
+        view
+        returns (
+            uint256 id,
+            uint256 star,
+            // 剩余粉尘
+            uint256 tokenVal,
+            uint256[] memory cardType,
+            // 词条
+            uint256[] memory cardEntrys,
+            bytes32 tokenUri,
+            address ownerAddress
+        )
     {
-        EnumerableCardNFT.CardEntry memory card = _tokenOwners.get(tokenId,"card no find");
+        EnumerableCardNFT.CardEntry memory card = _tokenOwners.get(
+            tokenId,
+            "card no find"
+        );
         return (
             uint256(card._tokenId),
             card._star,
@@ -588,14 +593,60 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
     }
 
-    function allTokenIds() public view returns(uint256[] memory){
+    function allTokenIds() public view returns (uint256[] memory) {
         return _tokenOwners.allTokenIds();
+    }
+
+    function _createCardByOwner(
+        uint256[] memory cardTypes,
+        uint256[] memory cardEntrys,
+        uint256 star,
+        uint256 dust,
+        bytes32 cardUri
+    ) internal {
+        require(msg.sender != address(0), "ERC1155: mint to the zero address");
+        uint256 tokenId = nextTokenId();
+        address operator = _msgSender();
+
+        _beforeTokenTransfer(
+            operator,
+            address(0),
+            msg.sender,
+            _asSingletonArray(tokenId),
+            _asSingletonArray(1),
+            ""
+        );
+
+        _balances[tokenId][msg.sender] = _balances[tokenId][msg.sender].add(1);
+
+        _holderTokens[msg.sender].add(tokenId);
+        _tokenOwners.set(
+            tokenId,
+            star,
+            dust,
+            cardTypes,
+            cardEntrys,
+            cardUri,
+            msg.sender
+        );
+        ////////////////
+        emit TransferSingle(operator, address(0), msg.sender, tokenId, 1);
+
+        _doSafeTransferAcceptanceCheck(
+            operator,
+            address(0),
+            msg.sender,
+            tokenId,
+            1,
+            ""
+        );
     }
 
     function _createCard(
         address account,
         uint256 id,
-        uint[] memory cardType,uint[] memory cardEntrys,
+        uint256[] memory cardType,
+        uint256[] memory cardEntrys,
         bytes memory data
     ) internal virtual {
         require(account != address(0), "ERC1155: mint to the zero address");
@@ -612,10 +663,10 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
 
         _balances[id][account] = _balances[id][account].add(1);
-       
+
         _holderTokens[account].add(id);
-        uint star = randomCardStar();
-        _tokenOwners.set(id,star,100,cardType,cardEntrys,"",account);
+        uint256 star = randomCardStar();
+        _tokenOwners.set(id, star, 100, cardType, cardEntrys, "", account);
         ////////////////
         emit TransferSingle(operator, address(0), account, id, 1);
 
@@ -629,21 +680,22 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
     }
 
-    event CardCreated(
-        address indexed toAddress,
-        uint tokenId
-    );
+    event CardCreated(address indexed toAddress, uint256 tokenId);
 
-    function nextTokenId() internal view returns (uint){
-        return _tokenOwners.length()+1;
+    function nextTokenId() internal view returns (uint256) {
+        return _tokenOwners.length() + 1;
     }
 
-    function setTokenUri(uint256 tokenId, bytes32 tokenUri) 
-    public
-    {
-        EnumerableCardNFT.CardEntry memory token = _tokenOwners.get(tokenId, "token not found");
-        require(token._ownerAddress == _msgSender(),"you are not token master");
-        require(token._uri == '',"token uri is already in use");
+    function setTokenUri(uint256 tokenId, bytes32 tokenUri) public {
+        EnumerableCardNFT.CardEntry memory token = _tokenOwners.get(
+            tokenId,
+            "token not found"
+        );
+        require(
+            token._ownerAddress == _msgSender(),
+            "you are not token master"
+        );
+        require(token._uri == "", "token uri is already in use");
 
         _tokenOwners.set(
             uint256(token._tokenId),
@@ -656,7 +708,14 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
     }
 
-    function setTokenValue(uint tokenId,uint star,uint tokenValue,uint[] memory cardType,uint[] memory cardEntrys,bytes32 tokenUri) public{
+    function setTokenValue(
+        uint256 tokenId,
+        uint256 star,
+        uint256 tokenValue,
+        uint256[] memory cardType,
+        uint256[] memory cardEntrys,
+        bytes32 tokenUri
+    ) public {
         _tokenOwners.set(
             uint256(tokenId),
             star,
@@ -668,20 +727,22 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         );
     }
 
-    function random() internal view returns (uint) {
-        uint randomHash = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
+    function random() internal view returns (uint256) {
+        uint256 randomHash = uint256(
+            keccak256(abi.encodePacked(block.difficulty, block.timestamp))
+        );
         // uint randomHash = uint(keccak256(block.difficulty, block.timestamp));
         return randomHash % 1000;
     }
 
-    function randomCardStar() internal returns (uint){
-        uint randomHash = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
-        uint firstRandom = randomHash % 1000 + msg.value/100000000000000;
-        if (firstRandom > 1000){
+    function randomCardStar() internal returns (uint256) {
+        uint256 randomHash = uint256(
+            keccak256(abi.encodePacked(block.difficulty, block.timestamp))
+        );
+        uint256 firstRandom = (randomHash % 1000) + msg.value / 100000000000000;
+        if (firstRandom > 1000) {
             firstRandom = 1000;
         }
-        return firstRandom /100;
+        return firstRandom / 100;
     }
 }
-
-
