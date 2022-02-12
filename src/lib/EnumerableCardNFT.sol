@@ -2,16 +2,15 @@
 pragma solidity ^0.8.0;
 
 library EnumerableCardNFT {
-
     struct CardEntry {
         bytes32 _tokenId;
-        uint _star;
+        uint256 _star;
         // 剩余粉尘
-        uint _tokenVal;
-        uint[] _cardType;
+        uint256 _tokenVal;
+        uint256[] _cardType;
         // 词条
-        uint[] _cardEntrys;
-        bytes32 _uri;
+        uint256[] _cardEntrys;
+        string _uri;
         address _ownerAddress;
     }
 
@@ -23,10 +22,7 @@ library EnumerableCardNFT {
         mapping(bytes32 => uint256) _indexes;
     }
 
-    function _all(CardMap storage map) 
-    private 
-    view 
-    returns (uint256[] memory){
+    function _all(CardMap storage map) private view returns (uint256[] memory) {
         uint256[] memory tokenIds = new uint256[](map._entries.length);
         for (uint256 i = 0; i < map._entries.length; ++i) {
             tokenIds[i] = uint256(map._entries[i]._tokenId);
@@ -44,13 +40,13 @@ library EnumerableCardNFT {
     function _set(
         CardMap storage map,
         bytes32 tokenId,
-        uint star,
+        uint256 star,
         // 剩余粉尘
-        uint tokenVal,
-        uint[] memory cardType,
+        uint256 tokenVal,
+        uint256[] memory cardType,
         // 词条
-        uint[] memory cardEntrys,
-        bytes32 uri,
+        uint256[] memory cardEntrys,
+        string memory uri,
         address ownerAddress
     ) private returns (bool) {
         // We read and store the key's index to prevent multiple reads from the same storage slot
@@ -58,17 +54,17 @@ library EnumerableCardNFT {
 
         if (keyIndex == 0) {
             // Equivalent to !contains(map, key)
-            map._entries.push(CardEntry(
-                {
-                    _tokenId: tokenId, 
-                    _star:star,
-                    _tokenVal:tokenVal,
-                    _cardType:cardType,
-                    _cardEntrys:cardEntrys,
-                    _uri:uri,
-                    _ownerAddress:ownerAddress
-                }
-            ));
+            map._entries.push(
+                CardEntry({
+                    _tokenId: tokenId,
+                    _star: star,
+                    _tokenVal: tokenVal,
+                    _cardType: cardType,
+                    _cardEntrys: cardEntrys,
+                    _uri: uri,
+                    _ownerAddress: ownerAddress
+                })
+            );
             // The entry is stored at length-1, but we add 1 to all indexes
             // and use 0 as a sentinel value
             map._indexes[tokenId] = map._entries.length;
@@ -89,10 +85,7 @@ library EnumerableCardNFT {
         CardMap storage map,
         bytes32 tokenId,
         address ownerAddress
-    )
-    private 
-    returns (bool)
-    {
+    ) private returns (bool) {
         uint256 keyIndex = map._indexes[tokenId];
         if (keyIndex == 0) {
             return false;
@@ -101,7 +94,7 @@ library EnumerableCardNFT {
         return true;
     }
 
-     /**
+    /**
      * @dev Removes a key-value pair from a map. O(1).
      *
      * Returns true if the key was removed from the map, that is if it was present.
@@ -141,7 +134,7 @@ library EnumerableCardNFT {
         }
     }
 
-       /**
+    /**
      * @dev Returns true if the key is in the map. O(1).
      */
     function _contains(CardMap storage map, bytes32 key)
@@ -152,14 +145,14 @@ library EnumerableCardNFT {
         return map._indexes[key] != 0;
     }
 
-     /**
+    /**
      * @dev Returns the number of key-value pairs in the map. O(1).
      */
     function _length(CardMap storage map) private view returns (uint256) {
         return map._entries.length;
     }
 
-     /**
+    /**
      * @dev Returns the key-value pair stored at position `index` in the map. O(1).
      *
      * Note that there are no guarantees on the ordering of entries inside the
@@ -173,13 +166,14 @@ library EnumerableCardNFT {
         private
         view
         returns (
-        bytes32,
-        uint,
-        uint,
-        uint[] memory,
-        uint[] memory,
-        bytes32,
-        address)
+            bytes32,
+            uint256,
+            uint256,
+            uint256[] memory,
+            uint256[] memory,
+            string memory,
+            address
+        )
     {
         require(
             map._entries.length > index,
@@ -199,49 +193,44 @@ library EnumerableCardNFT {
     }
 
     /**
-    * @dev Returns the value associated with `key`.  O(1).
-    *
-    * Requirements:
-    *
-    * - `key` must be in the map.
-    */
-    function _get(CardMap storage map, bytes32 tokenId) private view   
-    returns (CardEntry memory) 
+     * @dev Returns the value associated with `key`.  O(1).
+     *
+     * Requirements:
+     *
+     * - `key` must be in the map.
+     */
+    function _get(CardMap storage map, bytes32 tokenId)
+        private
+        view
+        returns (CardEntry memory)
     {
         return _get(map, tokenId, "EnumerableMap: nonexistent key");
     }
 
-   /**
+    /**
      * @dev Same as {_get}, with a custom error message when `key` is not in the map.
      */
     function _get(
         CardMap storage map,
         bytes32 tokenId,
         string memory errorMessage
-    ) private view 
-    returns (CardEntry memory) 
-    {
+    ) private view returns (CardEntry memory) {
         uint256 keyIndex = map._indexes[tokenId];
         require(keyIndex != 0, errorMessage); // Equivalent to contains(map, key)
         return map._entries[keyIndex - 1]; // All indexes are 1-based
     }
 
-   /**
+    /**
      * @dev Same as {_get}, with a custom error message when `key` is not in the map.
      */
     function _getOwnerAddress(
         CardMap storage map,
         bytes32 tokenId,
         string memory errorMessage
-    ) private view 
-    returns (
-        address)
-    {
+    ) private view returns (address) {
         uint256 keyIndex = map._indexes[tokenId];
         require(keyIndex != 0, errorMessage); // Equivalent to contains(map, key)
-        return (
-            map._entries[keyIndex - 1]._ownerAddress
-        ); // All indexes are 1-based
+        return (map._entries[keyIndex - 1]._ownerAddress); // All indexes are 1-based
     }
 
     // UintToAddressMap
@@ -250,10 +239,12 @@ library EnumerableCardNFT {
         CardMap _inner;
     }
 
-    function setTokenTo(UintToAddressMap storage map,uint256 tokenId,address toOwner)
-    internal returns (bool)
-    {
-        return _setTokenTo(map._inner,bytes32(tokenId),toOwner);
+    function setTokenTo(
+        UintToAddressMap storage map,
+        uint256 tokenId,
+        address toOwner
+    ) internal returns (bool) {
+        return _setTokenTo(map._inner, bytes32(tokenId), toOwner);
     }
 
     /**
@@ -266,32 +257,33 @@ library EnumerableCardNFT {
     function set(
         UintToAddressMap storage map,
         uint256 tokenId,
-        uint star,
+        uint256 star,
         // 剩余粉尘
-        uint tokenVal,
-        uint[] memory cardType,
+        uint256 tokenVal,
+        uint256[] memory cardType,
         // 词条
-        uint[] memory cardEntrys,
-        bytes32 uri,
+        uint256[] memory cardEntrys,
+        string memory uri,
         address owner
     ) internal returns (bool) {
-        return _set(
-            map._inner, 
-            bytes32(tokenId),
-            star,
-            tokenVal,
-            cardType,
-            cardEntrys,
-            uri,
-            owner
-        );
+        return
+            _set(
+                map._inner,
+                bytes32(tokenId),
+                star,
+                tokenVal,
+                cardType,
+                cardEntrys,
+                uri,
+                owner
+            );
     }
 
     /**
-    * @dev Removes a value from a set. O(1).
-    *
-    * Returns true if the key was removed from the map, that is if it was present.
-    */
+     * @dev Removes a value from a set. O(1).
+     *
+     * Returns true if the key was removed from the map, that is if it was present.
+     */
     function remove(UintToAddressMap storage map, uint256 tokenId)
         internal
         returns (bool)
@@ -300,8 +292,8 @@ library EnumerableCardNFT {
     }
 
     /**
-    * @dev Returns true if the key is in the map. O(1).
-    */
+     * @dev Returns true if the key is in the map. O(1).
+     */
     function contains(UintToAddressMap storage map, uint256 tokenId)
         internal
         view
@@ -311,8 +303,8 @@ library EnumerableCardNFT {
     }
 
     /**
-    * @dev Returns the number of elements in the map. O(1).
-    */
+     * @dev Returns the number of elements in the map. O(1).
+     */
     function length(UintToAddressMap storage map)
         internal
         view
@@ -322,36 +314,36 @@ library EnumerableCardNFT {
     }
 
     /**
-    * @dev Returns the element stored at position `index` in the set. O(1).
-    * Note that there are no guarantees on the ordering of values inside the
-    * array, and it may change when more values are added or removed.
-    *
-    * Requirements:
-    *
-    * - `index` must be strictly less than {length}.
-    */
+     * @dev Returns the element stored at position `index` in the set. O(1).
+     * Note that there are no guarantees on the ordering of values inside the
+     * array, and it may change when more values are added or removed.
+     *
+     * Requirements:
+     *
+     * - `index` must be strictly less than {length}.
+     */
     function at(UintToAddressMap storage map, uint256 index)
         internal
         view
         returns (
             uint256,
-            uint,
-            uint,
-            uint[] memory,
-            uint[] memory,
-            bytes32,
+            uint256,
+            uint256,
+            uint256[] memory,
+            uint256[] memory,
+            string memory,
             address
         )
     {
         (
             bytes32 _tokenId,
-            uint _star,
+            uint256 _star,
             // 剩余粉尘
-            uint _tokenVal,
-            uint[] memory _cardType,
+            uint256 _tokenVal,
+            uint256[] memory _cardType,
             // 词条
-            uint[] memory _cardEntrys,
-            bytes32 _uri,
+            uint256[] memory _cardEntrys,
+            string memory _uri,
             address _ownerAddress
         ) = _at(map._inner, index);
         return (
@@ -364,31 +356,35 @@ library EnumerableCardNFT {
             _ownerAddress
         );
     }
-    
+
     /**
-    * @dev Returns the value associated with `key`.  O(1).
-    *
-    * Requirements:
-    *
-    * - `key` must be in the map.
-    */
-    function get(UintToAddressMap storage map, uint256 key, string memory errorMessage)
-        internal
-        view
-        returns (CardEntry memory) 
-    {
+     * @dev Returns the value associated with `key`.  O(1).
+     *
+     * Requirements:
+     *
+     * - `key` must be in the map.
+     */
+    function get(
+        UintToAddressMap storage map,
+        uint256 key,
+        string memory errorMessage
+    ) internal view returns (CardEntry memory) {
         return _get(map._inner, bytes32(key), errorMessage);
     }
 
-    function getOwner(UintToAddressMap storage map,uint256 tokenId,string memory errorMessage) 
-    internal view         
-    returns (address)
-    {
-        return _getOwnerAddress(map._inner, bytes32(tokenId),errorMessage);
+    function getOwner(
+        UintToAddressMap storage map,
+        uint256 tokenId,
+        string memory errorMessage
+    ) internal view returns (address) {
+        return _getOwnerAddress(map._inner, bytes32(tokenId), errorMessage);
     }
 
     function allTokenIds(UintToAddressMap storage map)
-    internal view returns(uint256[] memory){
+        internal
+        view
+        returns (uint256[] memory)
+    {
         return _all(map._inner);
     }
 }

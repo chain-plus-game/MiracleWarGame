@@ -17,9 +17,9 @@ contract MiracleCard is ERC1155 {
     uint256 public useCastProportion = 50;
 
     // 铸造卡牌所需金额
-    uint256 public createCardCast = 100000000000000;
+    uint256 public createCardCast = 1000000000000000;
     // 购买卡包所需金额
-    uint256 public buyCardPackCast = 100000000000000;
+    uint256 public buyCardPackCast = 1000000000000000;
 
     MiracleDust private MiracleDustToken;
 
@@ -43,15 +43,15 @@ contract MiracleCard is ERC1155 {
     {
         packTo = payTo;
         _owner = msg.sender;
-        setTrustedAddress(msg.sender);
-        address[] memory owners = new address[](1);
-        owners[0] = msg.sender;
+        setTrustedAddress(_owner);
+        address[] memory trusted = new address[](1);
+        trusted[0] = _owner;
         MiracleDustToken = new MiracleDust(
             initDustNum,
             address(this),
             payTo,
             _owner,
-            owners
+            trusted
         );
     }
 
@@ -174,7 +174,7 @@ contract MiracleCard is ERC1155 {
         uint256[] memory cardEntrys,
         uint256 star,
         uint256 dust,
-        bytes32 cardUri
+        string memory cardUri
     ) public {
         require(msg.sender == _owner, "This method must called by owner");
         _createCardByOwner(cardTypes, cardEntrys, star, dust, cardUri);
@@ -231,7 +231,7 @@ contract MiracleCard is ERC1155 {
                 uint256[] memory cardType,
                 // 词条
                 uint256[] memory cardEntrys,
-                bytes32 tokenUri,
+                string memory tokenUri,
                 address ownerAddress
             ) = getToken(useCards[index]);
             require(ownerAddress == msg.sender, "Insufficient permissions");
@@ -260,7 +260,7 @@ contract MiracleCard is ERC1155 {
                 uint256[] memory cardType,
                 // 词条
                 uint256[] memory cardEntrys,
-                bytes32 tokenUri,
+                string memory tokenUri,
                 address ownerAddress
             ) = getToken(useCardPip[index]);
             require(ownerAddress == msg.sender, "Insufficient permissions");
@@ -289,7 +289,7 @@ contract MiracleCard is ERC1155 {
             uint256[] memory cardType,
             // 词条
             uint256[] memory cardEntrys,
-            bytes32 tokenUri,
+            string memory tokenUri,
 
         ) = getToken(tokenId);
         MiracleDustToken.BurnFromRechargeCard(msg.sender, num);
@@ -325,7 +325,7 @@ contract MiracleCard is ERC1155 {
                 uint256[] memory cardType,
                 // 词条
                 uint256[] memory cardEntrys,
-                bytes32 tokenUri,
+                string memory tokenUri,
 
             ) = getToken(cards[index]);
             uint256 newVal = tokenVal + rechargeNums[index];

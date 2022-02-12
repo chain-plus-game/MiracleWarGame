@@ -561,7 +561,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             uint256[] memory cardType,
             // 词条
             uint256[] memory cardEntrys,
-            bytes32 tokenUri,
+            string memory tokenUri,
             address ownerAddress
         )
     {
@@ -589,7 +589,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256[] memory cardEntrys,
         uint256 star,
         uint256 dust,
-        bytes32 cardUri
+        string memory cardUri
     ) internal {
         require(msg.sender != address(0), "ERC1155: mint to the zero address");
         uint256 tokenId = nextTokenId();
@@ -634,7 +634,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256 id,
         uint256[] memory cardType,
         uint256[] memory cardEntrys,
-        bytes32 cardUri,
+        string memory cardUri,
         uint256 starMax
     ) internal virtual {
         require(account != address(0), "ERC1155: mint to the zero address");
@@ -674,7 +674,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         return _tokenOwners.length() + 1;
     }
 
-    function setTokenUri(uint256 tokenId, bytes32 tokenUri) public {
+    function setTokenUri(uint256 tokenId, string memory tokenUri) public {
         EnumerableCardNFT.CardEntry memory token = _tokenOwners.get(
             tokenId,
             "token not found"
@@ -683,7 +683,8 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             token._ownerAddress == _msgSender(),
             "you are not token master"
         );
-        require(token._uri == "", "token uri is already in use");
+
+        // require(token._uri == non, "token uri is already in use");
 
         _tokenOwners.set(
             uint256(token._tokenId),
@@ -702,7 +703,7 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256 tokenValue,
         uint256[] memory cardType,
         uint256[] memory cardEntrys,
-        bytes32 tokenUri
+        string memory tokenUri
     ) public {
         _tokenOwners.set(
             uint256(tokenId),
