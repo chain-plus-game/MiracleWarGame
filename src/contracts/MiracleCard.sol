@@ -180,10 +180,11 @@ contract MiracleCard is ERC1155 {
         _createCardByOwner(cardTypes, cardEntrys, star, dust, cardUri);
     }
 
-    function createCard(uint256 cardType, uint256[] memory cardEntrys)
-        public
-        payable
-    {
+    function createCard(
+        uint256 cardType,
+        uint256[] memory cardEntrys,
+        string memory tokenUri
+    ) public payable {
         require(msg.value >= createCardCast, "no enough money");
         packTo.transfer(msg.value);
         uint256 tokenId = nextTokenId();
@@ -195,7 +196,7 @@ contract MiracleCard is ERC1155 {
                 tokenId,
                 cardTypes,
                 getRandomCardEntrys(cardEntrys),
-                "",
+                tokenUri,
                 maxCardCreateStar
             );
         } else {
@@ -204,7 +205,7 @@ contract MiracleCard is ERC1155 {
                 tokenId,
                 cardTypes,
                 getRandomCardEntrys(_entrys),
-                "",
+                tokenUri,
                 maxCardCreateStar
             );
         }
@@ -240,7 +241,7 @@ contract MiracleCard is ERC1155 {
             uint256 newVal = tokenVal - lockVal[index];
             setTokenValue(id, star, newVal, cardType, cardEntrys, tokenUri);
         }
-        require(addDustNum > 0,"lock value Quantity must be greater than 0");
+        require(addDustNum > 0, "lock value Quantity must be greater than 0");
         MiracleDustToken.addDust(lockTo, addDustNum);
     }
 

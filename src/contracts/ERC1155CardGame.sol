@@ -44,6 +44,8 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     address _owner = address(0);
 
+    uint256 defaultCardDust = 100;
+
     /**
      * @dev See {_setURI}.
      */
@@ -95,6 +97,11 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
             "ERC1155: balance query for the zero address"
         );
         return _holderTokens[account].all();
+    }
+
+    function setDefaultDust(uint256 _dust) public {
+        require(isTrustedAddress(msg.sender), "not isTrustedAddress");
+        defaultCardDust = _dust;
     }
 
     /**
@@ -322,7 +329,15 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         cardType[0] = 1;
         uint256[] memory cardEntrys = new uint256[](1);
         cardEntrys[0] = 1;
-        _tokenOwners.set(id, 10, 100, cardType, cardEntrys, "", account);
+        _tokenOwners.set(
+            id,
+            10,
+            defaultCardDust,
+            cardType,
+            cardEntrys,
+            "",
+            account
+        );
         ////////////////
         emit TransferSingle(operator, address(0), account, id, amount);
 
@@ -654,7 +669,15 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
         _holderTokens[account].add(id);
         uint256 star = randomCardStar(starMax);
-        _tokenOwners.set(id, star, 100, cardType, cardEntrys, cardUri, account);
+        _tokenOwners.set(
+            id,
+            star,
+            defaultCardDust,
+            cardType,
+            cardEntrys,
+            cardUri,
+            account
+        );
         ////////////////
         emit TransferSingle(operator, address(0), account, id, 1);
 
@@ -672,29 +695,6 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     function nextTokenId() internal view returns (uint256) {
         return _tokenOwners.length() + 1;
-    }
-
-    function setTokenUri(uint256 tokenId, string memory tokenUri) public {
-        EnumerableCardNFT.CardEntry memory token = _tokenOwners.get(
-            tokenId,
-            "token not found"
-        );
-        require(
-            token._ownerAddress == _msgSender(),
-            "you are not token master"
-        );
-
-        // require(token._uri == non, "token uri is already in use");
-
-        _tokenOwners.set(
-            uint256(token._tokenId),
-            token._star,
-            token._tokenVal,
-            token._cardType,
-            token._cardEntrys,
-            tokenUri,
-            _msgSender()
-        );
     }
 
     function setTokenValue(
