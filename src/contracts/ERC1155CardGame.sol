@@ -36,27 +36,13 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     // Mapping from account to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
+    mapping(address => bool) private _trustedAddress;
+
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
     uint256 randNonce = 0;
 
-    /*
-     *     bytes4(keccak256('balanceOf(address,uint256)')) == 0x00fdd58e
-     *     bytes4(keccak256('balanceOfBatch(address[],uint256[])')) == 0x4e1273f4
-     *     bytes4(keccak256('setApprovalForAll(address,bool)')) == 0xa22cb465
-     *     bytes4(keccak256('isApprovedForAll(address,address)')) == 0xe985e9c5
-     *     bytes4(keccak256('safeTransferFrom(address,address,uint256,uint256,bytes)')) == 0xf242432a
-     *     bytes4(keccak256('safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)')) == 0x2eb2c2d6
-     *
-     *     => 0x00fdd58e ^ 0x4e1273f4 ^ 0xa22cb465 ^
-     *        0xe985e9c5 ^ 0xf242432a ^ 0x2eb2c2d6 == 0xd9b67a26
-     */
-    // bytes4 private constant _INTERFACE_ID_ERC1155 = 0xd9b67a26;
-
-    /*
-     *     bytes4(keccak256('uri(uint256)')) == 0x0e89341c
-     */
-    // bytes4 private constant _INTERFACE_ID_ERC1155_METADATA_URI = 0x0e89341c;
+    address _owner = address(0);
 
     /**
      * @dev See {_setURI}.
@@ -750,5 +736,19 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         uint256 ramMax = max * 10;
         randNonce++;
         return firstRandom / ramMax;
+    }
+
+    function isTrustedAddress(address _address) public view returns (bool) {
+        return _trustedAddress[_address];
+    }
+
+    function setTrustedAddress(address _address) public {
+        require(msg.sender == _owner, "This method must called by owner");
+        _trustedAddress[_address] = true;
+    }
+
+    function removeTrustedAddress(address _address) public {
+        require(msg.sender == _owner, "This method must called by owner");
+        _trustedAddress[_address] = false;
     }
 }

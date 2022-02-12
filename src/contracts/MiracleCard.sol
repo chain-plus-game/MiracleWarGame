@@ -6,7 +6,6 @@ import "./MiracleDust.sol";
 
 /** @dev Replace _CONTRACT_NAME with your contract name, and "IDXX" with your token name. */
 contract MiracleCard is ERC1155 {
-    address _owner = address(0);
     address payable packTo;
     /** @dev  Replace "TOKEN" with your token name & "_XXXX_" with your token symbol */
     string public name = "MiracleNFT";
@@ -23,8 +22,6 @@ contract MiracleCard is ERC1155 {
     uint256 public buyCardPackCast = 100000000000000;
 
     MiracleDust private MiracleDustToken;
-
-    mapping(address => bool) private _trustedAddress;
 
     // 随机卡包的卡面
     bytes32[] public randomPackUris;
@@ -46,7 +43,7 @@ contract MiracleCard is ERC1155 {
     {
         packTo = payTo;
         _owner = msg.sender;
-        _trustedAddress[msg.sender] = true;
+        setTrustedAddress(msg.sender);
         address[] memory owners = new address[](1);
         owners[0] = msg.sender;
         MiracleDustToken = new MiracleDust(
@@ -70,20 +67,6 @@ contract MiracleCard is ERC1155 {
     function setBuyCardPackCast(uint256 _cast) public {
         require(msg.sender == _owner, "This method must called by owner");
         buyCardPackCast = _cast;
-    }
-
-    function isTrustedAddress(address _address) public view returns (bool) {
-        return _trustedAddress[_address];
-    }
-
-    function setTrustedAddress(address _address) public {
-        require(msg.sender == _owner, "This method must called by owner");
-        _trustedAddress[_address] = true;
-    }
-
-    function removeTrustedAddress(address _address) public {
-        require(msg.sender == _owner, "This method must called by owner");
-        _trustedAddress[_address] = false;
     }
 
     // 默认位数，即小数点后几位
@@ -226,6 +209,39 @@ contract MiracleCard is ERC1155 {
             );
         }
         emit CardCreated(msg.sender, tokenId);
+    }
+
+    function lockCardDust(
+        uint256[] memory useCards,
+        uint256[] memory lockVal,
+        address lockTo
+    ) public {
+        require(
+            isTrustedAddress(lockTo),
+            "The destination address must be a trusted address"
+        );
+        require(useCards.length == lockVal.length, "length must be equal");
+        uint256 addDustNum = 0;
+        for (uint256 index = 0; index < useCards.length; index++) {
+            (
+                uint256 id,
+                uint256 star,
+                // 剩余粉尘
+                uint256 tokenVal,
+                uint256[] memory cardType,
+                // 词条
+                uint256[] memory cardEntrys,
+                bytes32 tokenUri,
+                address ownerAddress
+            ) = getToken(useCards[index]);
+            require(ownerAddress == msg.sender, "Insufficient permissions");
+            require(tokenVal > lockVal[index], "Not enough numbers");
+            addDustNum += lockVal[index];
+            uint256 newVal = tokenVal - lockVal[index];
+            setTokenValue(id, star, newVal, cardType, cardEntrys, tokenUri);
+        }
+        require(addDustNum > 0,"lock value Quantity must be greater than 0");
+        MiracleDustToken.addDust(lockTo, addDustNum);
     }
 
     function useCard(uint256[] memory useCardPip) public {
