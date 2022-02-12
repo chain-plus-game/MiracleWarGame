@@ -11,6 +11,7 @@ contract MiracleCard is ERC1155 {
     string public name = "MiracleNFT";
     string public symbol = "MiracleNFT";
 
+    uint256 public cardMaxType = 3;
     uint256[] public _entrys = [1, 2, 3, 4, 5];
     uint256 public _entrysLength = 5;
     uint256 public useCast = 5;
@@ -67,6 +68,14 @@ contract MiracleCard is ERC1155 {
     function setBuyCardPackCast(uint256 _cast) public {
         require(msg.sender == _owner, "This method must called by owner");
         buyCardPackCast = _cast;
+    }
+
+    function setCardMaxType(uint256 maxType) public {
+        require(
+            isTrustedAddress(msg.sender),
+            "This method must called by trusted"
+        );
+        cardMaxType = maxType;
     }
 
     // 默认位数，即小数点后几位
@@ -186,6 +195,7 @@ contract MiracleCard is ERC1155 {
         string memory tokenUri
     ) public payable {
         require(msg.value >= createCardCast, "no enough money");
+        require(cardType <= cardMaxType, "not have this card type");
         packTo.transfer(msg.value);
         uint256 tokenId = nextTokenId();
         uint256[] memory cardTypes = new uint256[](3);
