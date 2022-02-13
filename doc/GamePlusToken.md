@@ -2,7 +2,9 @@
 分红代币  
 Dividend Token  
 [合约代码](/src/contracts/GamePlusToken.sol)
-
+  
+OEC address 0xD93bf1352ADAfd60898364ba15Af6f4A3df728db
+  
 ## 代币性质
 Token nature
 

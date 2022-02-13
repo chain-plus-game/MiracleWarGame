@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "../lib/EnumerableSetBytes.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../lib/EnumerableCardNFT.sol";
 import "../lib/Bytes32.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -24,12 +24,12 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     using SafeMath for uint256;
     using Address for address;
     using Bytes32 for bytes32;
-    using EnumerableSetBytes for EnumerableSetBytes.UintSet;
+    using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableCardNFT for EnumerableCardNFT.UintToAddressMap;
     using EnumerableCardNFT for EnumerableCardNFT.CardEntry;
 
     EnumerableCardNFT.UintToAddressMap private _tokenOwners;
-    mapping(address => EnumerableSetBytes.UintSet) private _holderTokens;
+    mapping(address => EnumerableSet.UintSet) private _holderTokens;
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
 
@@ -90,13 +90,13 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     function allBalance(address account)
         public
         view
-        returns (bytes32[] memory)
+        returns (uint256[] memory)
     {
         require(
             account != address(0),
             "ERC1155: balance query for the zero address"
         );
-        return _holderTokens[account].all();
+        return _holderTokens[account].values();
     }
 
     function setDefaultDust(uint256 _dust) public {
