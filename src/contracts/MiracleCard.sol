@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./GamePlusToken.sol";
 import "./ERC1155CardGame.sol";
 import "./MiracleDust.sol";
+
 
 /** @dev Replace _CONTRACT_NAME with your contract name, and "IDXX" with your token name. */
 contract MiracleCard is ERC1155 {
@@ -23,6 +25,7 @@ contract MiracleCard is ERC1155 {
     uint256 public buyCardPackCast = 1000000000000000;
 
     MiracleDust private MiracleDustToken;
+    GamePlusToken public payToToken;
 
     // 随机卡包的卡面
     bytes32[] public randomPackUris;
@@ -38,22 +41,23 @@ contract MiracleCard is ERC1155 {
 
     /** @dev Use ERC-1155 metadata standard for your JSON file & use hexadecimal of your token ID in _file_name.json */
 
-    constructor(address payable payTo, uint256 initDustNum)
+    constructor(address payable payTo)
         ERC1155("https://nft.fuakorm.com/{id}.json")
     /** @dev If you want tokens to be non-fungible, value must be 1 */
     {
         packTo = payTo;
+        payToToken = GamePlusToken(payTo);
         _owner = msg.sender;
         setTrustedAddress(_owner);
-        address[] memory trusted = new address[](1);
-        trusted[0] = _owner;
-        MiracleDustToken = new MiracleDust(
-            initDustNum,
-            address(this),
-            payTo,
-            _owner,
-            trusted
-        );
+    }
+
+    function getPayTo() public view returns (address){
+        return packTo;
+    }
+
+    function setMiracleDust(address tokenAddress) public{
+        require(msg.sender == _owner,"This method must called by owner");
+        MiracleDustToken = MiracleDust(tokenAddress);
     }
 
     function getMiracleDustTokenAddress() public view returns (address) {
@@ -220,6 +224,7 @@ contract MiracleCard is ERC1155 {
             );
         }
         emit CardCreated(msg.sender, tokenId);
+        
     }
 
     function lockCardDust(
