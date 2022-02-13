@@ -3,8 +3,6 @@
 Dividend Token  
 [Code](/src/contracts/GamePlusToken.sol)
   
-OEC address 0xD93bf1352ADAfd60898364ba15Af6f4A3df728db  [browser](https://www.oklink.com/zh-cn/oec/token/0xD93bf1352ADAfd60898364ba15Af6f4A3df728db)
-  
 ## 代币性质
 Token nature
 
@@ -23,3 +21,10 @@ Circulation
   
 The total issuance of tokens will be 10,000, and there will be no additional issuance.
 
+## 上链主网
+On-chain mainnet
+
+### OEC  
+address 0xD93bf1352ADAfd60898364ba15Af6f4A3df728db  
+[browser](https://www.oklink.com/zh-cn/oec/token/0xD93bf1352ADAfd60898364ba15Af6f4A3df728db)  
+[swap](https://www.cherryswap.net/#/swap)  
