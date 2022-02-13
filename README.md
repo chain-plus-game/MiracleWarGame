@@ -40,9 +40,9 @@ Most of the miracle card NFTs are minted by players, and a few are created by co
   
 In addition to consuming the main chain gas fee, the casting of miracle cards will also consume a certain amount of main chain currency. A part (10%) of this part of the currency will be incentivized to project maintainers to maintain the development of subsequent projects and ipfs-related resources Support, 70% will enter the resource prize pool to reward players in the ranking gameplay in the GameFi ecosystem, and the remaining 10% will be distributed to the holders of **Miracle Dust (MDT)**.  
   
-更多详情：[奇迹NFT设计](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleCardNFT.md)
+更多详情：[奇迹NFT设计](/doc/MiracleCardNFT.md)
 
-more details: [Miracle NFT Design](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleCardNFT.md)
+more details: [Miracle NFT Design](/doc/MiracleCardNFT.md)
 
 ### 奇迹粉尘（MDT）
 Miracle Dust  
@@ -57,8 +57,8 @@ Maintenance for Miracle Card NFT
 Ranking Rewards
 Semi-homogeneous token identification  
   
-更多详情：[ERC20代币MDT设计](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleDust.md)  
-more details: [ERC20Token MDT Design](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleDust.md)  
+更多详情：[ERC20代币MDT设计](/doc/MiracleDust.md)  
+more details: [ERC20Token MDT Design](/doc/MiracleDust.md)  
 
 ## 游戏生态
 GameFi Ecology
@@ -78,6 +78,6 @@ Players arrange the card lineup for each game in advance
 Low-ranked players improve their ranking by challenging high-ranked players to get higher score bonuses and season rewards
 When challenged, high-ranked players will earn Dust Depletion (MDT) tokens when the challenger uses the card
   
-更多详情：[奇迹自走棋游戏设计](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleDust.md)  
-more details: [Marvel Auto Chess Game Design](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/MiracleDust.md)  
+更多详情：[奇迹自走棋游戏设计](/doc/MiracleDust.md)  
+more details: [Marvel Auto Chess Game Design](/doc/MiracleDust.md)  
 

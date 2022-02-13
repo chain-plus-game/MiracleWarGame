@@ -1,6 +1,7 @@
 # GamePlusToken (GPT)
 分红代币  
-Dividend Token
+Dividend Token  
+[合约代码](/src/contracts/GamePlusToken.sol)
 
 ## 代币性质
 Token nature
@@ -20,4 +21,3 @@ Circulation
   
 The total issuance of tokens will be 10,000, and there will be no additional issuance.
 
-[合约代码](/src/contracts/GamePlusToken.sol)

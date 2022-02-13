@@ -1,5 +1,6 @@
 # 代币设计 
-Token design
+Token design  
+[合约代码](/src/contracts/MiracleDust.sol)
 
 ## 目的
 Purpose

@@ -1,5 +1,6 @@
 # NFT卡牌设计  
-NFT card design
+NFT card design  
+[合约代码](/src/contracts/MiracleCard.sol)
 
 相关链接  
 Related Links
@@ -38,3 +39,4 @@ metadata
   
 1155协议标准json结构,发布到ipfs网络  
 1155 protocol standard json structure, published to ipfs network
+
