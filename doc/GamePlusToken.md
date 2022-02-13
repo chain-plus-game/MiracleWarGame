@@ -20,4 +20,4 @@ Circulation
   
 The total issuance of tokens will be 10,000, and there will be no additional issuance.
 
-[合约代码](https://github.com/chain-plus-game/MiracleWarGame/blob/main/doc/GamePlusToken.md)
+[合约代码](/src/contracts/GamePlusToken.sol)
