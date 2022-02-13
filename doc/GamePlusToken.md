@@ -26,5 +26,5 @@ On-chain mainnet
 
 ### OEC  
 address 0xD93bf1352ADAfd60898364ba15Af6f4A3df728db  
-[browser](https://www.oklink.com/zh-cn/oec/token/0xD93bf1352ADAfd60898364ba15Af6f4A3df728db)  
+[browser](https://www.oklink.com/zh-cn/oec/address/0xD93bf1352ADAfd60898364ba15Af6f4A3df728db)  
 [swap](https://www.cherryswap.net/#/swap)  
