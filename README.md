@@ -3,6 +3,8 @@
 奇迹之战是一款以NFT为主，代币治理为辅的链游，当然，同样具备玩赚属性。  
 Miracle War is a chain game based on NFT and supplemented by token governance. Of course, you can also play and earn.
 
+- **股份权益代币，每一个人都可以获得游戏的产出分红
+- **Share equity tokens, everyone can get the output dividends of the game
 - **独一无二的NFT卡牌**
 - **Unique NFT Cards**
 - **通过游戏设计来控制数值平衡和经济平衡**
@@ -13,12 +15,18 @@ Miracle War is a chain game based on NFT and supplemented by token governance. O
 - **In terms of architectural design, data and logic are separated and contract authorization is encouraged. The community is encouraged to create different game modules based on the data structure. We hope that we can eventually have a Marvel Universe.**
 
 -------------------
+## 分红代币
+Dividend Token  
+
+我们通过道具nft和粉尘代币来连接各个游戏，生态的入金将打到统一的链游＋合约中，合约将根据代币的持有比例进行分红。  
+  
+We connect each game through props nft and dust tokens. The ecological deposit will be transferred to a unified chain game + contract, and the contract will pay dividends according to the holding ratio of the tokens.
+
 ## 代币设计
 Token Design  
 
 作为一款 Play-to-Earn 元宇宙游戏，任何人都可以通过熟练的游戏玩法和对生态系统的贡献在 Miracle War 中赚取代币。在 奇迹世界中，玩家可以铸造**奇迹卡牌NFT**，也可以通过开卡包的形式获取一些基础奇迹卡牌。**奇迹粉尘**则通过pvp等形式，通过游戏中行为使用奇迹卡牌NFT的形式来获取，也用来为奇迹卡牌NFT维持状态
-作为一款 Play-to-Earn 元宇宙游戏，任何人都可以通过熟练的游戏玩法和对生态系统的贡献在 Miracle War 中赚取代币。在 奇迹世界中，玩家可以铸造**奇迹卡牌NFT**，也可以通过开卡包的形式获取一些基础奇迹卡牌。**奇迹粉尘**则通过pvp等形式，通过游戏中行为使用奇迹卡牌NFT的形式来获取，也用来为奇迹卡牌NFT维持状态。  
-  
+
 As a Play-to-Earn metaverse game, anyone can earn tokens in Miracle War through skilled gameplay and contributions to the ecosystem. In the world of miracles, players can cast miracle card NFTs, and they can also get some basic miracle cards in the form of opening card packs. Miracle dust is obtained through pvp and other forms, through the use of miracle card NFTs through in-game behavior, and is also used to maintain the status of miracle card NFTs.  
 
 ### 奇迹NFT
