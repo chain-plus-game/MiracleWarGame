@@ -1,6 +1,6 @@
 # NFT卡牌设计  
 NFT card design  
-[合约代码](/src/contracts/MiracleCard.sol)
+[Code](/src/contracts/MiracleCard.sol)
 
 相关链接  
 Related Links
