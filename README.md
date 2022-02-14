@@ -19,7 +19,7 @@ Miracle War is a chain game based on NFT and supplemented by token governance. O
 Dividend Token  
 [分红代币](/doc/GamePlusToken.md)  
 
-我们通过道具nft和粉尘代币来连接各个游戏，生态的入金将打到统一的链游＋合约中，合约将根据代币的持有比例进行分红。  
+我们通过道具nft和粉尘代币来连接各个游戏，生态的入金将打到统一的资金合约中，合约将根据代币的持有比例进行分红。  
   
 We connect each game through props nft and dust tokens. The ecological deposit will be transferred to a unified chain game + contract, and the contract will pay dividends according to the holding ratio of the tokens.
 
