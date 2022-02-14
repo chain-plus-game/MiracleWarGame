@@ -2,9 +2,9 @@
 
 奇迹之战是一款以NFT为主，代币治理为辅的链游，当然，同样具备玩赚属性。  
 Miracle War is a chain game based on NFT and supplemented by token governance. Of course, you can also play and earn.
-
-- **股份权益代币，每一个人都可以获得游戏的产出分红
-- **Share equity tokens, everyone can get the output dividends of the game
+  
+- **股份权益代币，每一个人都可以获得游戏的产出分红**
+- **Share equity tokens, everyone can get the output dividends of the game**
 - **独一无二的NFT卡牌**
 - **Unique NFT Cards**
 - **通过游戏设计来控制数值平衡和经济平衡**
