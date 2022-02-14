@@ -20,3 +20,10 @@ Circulation
 The number of dust tokens in circulation is determined by the number and consumption of card NFTs. In addition to operational activities, when players use card NFTs to participate in games, the dust value in card NFTs will be depleted, and a certain percentage of the value will increase. to the player account corresponding to the gameplay, while increasing the total circulation
 
 When the dust value in the card NFT is less than the consumption of one use, the card NFT will no longer be able to participate in the game play, and the player needs to use the dust token to recharge it, which will consume the circulation of the token
+
+## 货币通缩和通胀
+deflation and inflation  
+  
+代币的增发根据卡牌NFT的使用量而决定，当NFT与链游的使用量增加时，粉尘代币的流通量也会随着增加。为了维持货币的通胀速度，我们对每一份由卡牌NFT转入的粉尘代币进行1/3的销毁。  
+  
+The additional issuance of tokens is determined according to the usage of card NFTs. When the usage of NFTs and chain games increases, the circulation of dust tokens will also increase. In order to maintain the inflation rate of the currency, we burn 1/3 of each dust token transferred from the card NFT.  
