@@ -107,3 +107,4 @@ src/contracts/package-lock.json
 artifacts/
 src/contracts/.deps/
 src/package-lock.json
+src/.deps/*
