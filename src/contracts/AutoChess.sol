@@ -1,8 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract GameAutoCheess {
+import "./MiracleCard.sol";
+import "../lib/AutoChessEntryFunc.sol";
 
-    constructor() {
+contract GameAutoCheess {
+    MiracleCard public cardNFT;
+
+    using AutoChessEntryFunc for AutoChessEntryFunc.EntryFunc;
+    AutoChessEntryFunc.EntryFunc private typeFunction;
+
+    constructor(address card) {
+        cardNFT = MiracleCard(card);
+        typeFunction.init();
     }
-} 
+
+    function challenge() public{
+        typeFunction.dispatch(1);
+    }
+
+
+}
