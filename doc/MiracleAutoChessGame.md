@@ -14,21 +14,6 @@ Dividend Token
 | 2     | 奇迹(miracle)   | 针对单位和棋盘效果的奇迹(Wonders for unit and board effects)  |
 | 3     | 战略(strategy)   | 对于单位和棋盘效果的战略(Strategies for unit and board effects)  |
 
-
-## 卡牌词缀 
-Card entry map
-
-### no.1 英勇 heroic  
-
-单位效果 unit effect
-1. 获得自身星级*2的攻击力  
-
-奇迹效果 miracle effect  
-1. 进行一次奇迹掷点，己方所有当前单位上升掷点数值的攻击力  
-
-战略效果 strategy effect  
-1. 己方所有单位的防御力上升攻击力数值
-
 ## 排名赛
 
 在设置完自己的卡牌组合后，玩家可以挑战任意已经设置好卡牌组合的其他玩家。  
@@ -40,3 +25,30 @@ Card entry map
 积分将参与赛季排名，赛季结束时，将按照总体积分比例进行奖池分红。  
 
 有关卡牌损耗相关，请参阅[ERC20代币MDT设计](./MiracleDust.md)  
+
+
+## 卡牌词缀 
+Card entry map
+
+### no.1 英勇 heroic  
+
+单位效果 unit effect
+1. 获得自身星级*2的攻击力和星级*1的生命值  
+
+奇迹效果 miracle effect  
+1. 进行一次奇迹掷点，己方所有当前单位上升掷点数值的攻击力  
+
+战略效果 strategy effect  
+1. 己方所有单位的防御力上升攻击力数值
+
+### no.2 冲锋 charge  
+
+单位效果 unit effect
+1. 获得自身星级*1的攻击力  
+2. 立即进行一次攻击
+
+奇迹效果 miracle effect  
+1. 进行一次奇迹掷点，点数>3时，使生命值最高的友军对生命值最低的敌军进行一次攻击
+
+战略效果 strategy effect  
+1. 此卡之后的下一个单位将获得冲锋效果
