@@ -82,3 +82,5 @@ When challenged, high-ranked players will earn Dust Depletion (MDT) tokens when 
 更多详情：[奇迹自走棋游戏设计](/doc/MiracleAutoChessGame.md)  
 more details: [Marvel Auto Chess Game Design](/doc/MiracleAutoChessGame.md)  
 
+### 灵感来源 inspiration
+>https://github.com/Cocos-BCX/1808/blob/master/README_cn.md
