@@ -30,6 +30,6 @@ address 0xD93bf1352ADAfd60898364ba15Af6f4A3df728db
 [swap](https://www.cherryswap.net/#/swap)  
 
 ### bsc
-address 0x653ED5E6a225E5FAafef68Fd4Cc731E6D2864425
+address 0x653ED5E6a225E5FAafef68Fd4Cc731E6D2864425  
 [browser](https://bscscan.com/token/0x653ED5E6a225E5FAafef68Fd4Cc731E6D2864425)  
 [swap](https://pancakeswap.finance/swap)  
