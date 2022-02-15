@@ -79,6 +79,6 @@ Players arrange the card lineup for each game in advance
 Low-ranked players improve their ranking by challenging high-ranked players to get higher score bonuses and season rewards
 When challenged, high-ranked players will earn Dust Depletion (MDT) tokens when the challenger uses the card
   
-更多详情：[奇迹自走棋游戏设计](/doc/MiracleDust.md)  
-more details: [Marvel Auto Chess Game Design](/doc/MiracleDust.md)  
+更多详情：[奇迹自走棋游戏设计](/doc/MiracleAutoChessGame.md)  
+more details: [Marvel Auto Chess Game Design](/doc/MiracleAutoChessGame.md)  
 
