@@ -5,7 +5,6 @@ import "./GamePlusToken.sol";
 import "./ERC1155CardGame.sol";
 import "./MiracleDust.sol";
 
-
 /** @dev Replace _CONTRACT_NAME with your contract name, and "IDXX" with your token name. */
 contract MiracleCard is ERC1155 {
     address payable packTo;
@@ -51,12 +50,12 @@ contract MiracleCard is ERC1155 {
         setTrustedAddress(_owner);
     }
 
-    function getPayTo() public view returns (address){
+    function getPayTo() public view returns (address) {
         return packTo;
     }
 
-    function setMiracleDust(address tokenAddress) public{
-        require(msg.sender == _owner,"This method must called by owner");
+    function setMiracleDust(address tokenAddress) public {
+        require(msg.sender == _owner, "This method must called by owner");
         MiracleDustToken = MiracleDust(tokenAddress);
     }
 
@@ -347,5 +346,32 @@ contract MiracleCard is ERC1155 {
             uint256 newVal = tokenVal + rechargeNums[index];
             setTokenValue(id, star, newVal, cardType, cardEntrys, tokenUri);
         }
+    }
+
+    function cardCanUse(address fromAddress, uint256[] memory ids)
+        public
+        view
+        returns (bool)
+    {
+        for (uint256 index = 0; index < ids.length; index++) {
+            (
+                uint256 id,
+                uint256 star,
+                // 剩余粉尘
+                uint256 tokenVal,
+                uint256[] memory cardType,
+                // 词条
+                uint256[] memory cardEntrys,
+                string memory tokenUri,
+                address cardOwner
+            ) = getToken(ids[index]);
+            if (cardOwner != fromAddress) {
+                return false;
+            }
+            if (tokenVal <= 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
