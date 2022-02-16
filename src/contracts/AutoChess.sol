@@ -103,20 +103,39 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
             );
             return;
         }
-        startBattle(msg.sender, toCompetitor, ownerCards, toCompetitorCards);
+        startBattle(ownerCards, toCompetitorCards);
     }
 
     function startBattle(
-        address owner,
-        address other,
         uint256[] memory ownerCards,
         uint256[] memory otherCards
     ) private {
         // 创建对战数据
+        AutoChessEntryFunc.CardInstance[]
+            memory ownerCardInstaces = new AutoChessEntryFunc.CardInstance[](
+                ownerCards.length
+            );
+        AutoChessEntryFunc.CardInstance[]
+            memory otherCardInstaces = new AutoChessEntryFunc.CardInstance[](
+                otherCards.length
+            );
+        for (uint256 index = 0; index < ownerCards.length; index++) {
+            ownerCardInstaces[index] = createCardInstance(ownerCards[index]);
+        }
+        for (uint256 index = 0; index < otherCards.length; index++) {
+            otherCardInstaces[index] = createCardInstance(otherCards[index]);
+        }
+        AutoChessEntryFunc.fightData
+            memory fight = AutoChessEntryFunc.fightData({
+                ownerCards: ownerCardInstaces,
+                otherCards: otherCardInstaces
+            });
+        
     }
 
     function createCardInstance(uint256 cardId)
-        private view
+        private
+        view
         returns (AutoChessEntryFunc.CardInstance memory)
     {
         (
