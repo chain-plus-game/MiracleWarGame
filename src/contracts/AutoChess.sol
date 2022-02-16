@@ -2,13 +2,14 @@
 
 pragma solidity ^0.8.0;
 
+import "../abstract/base.sol";
 import "./MiracleCard.sol";
 import "../lib/AutoChessEntryFunc.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-contract GameAutoCheess {
+contract GameAutoCheess is BaseGame {
     using SafeMath for uint256;
     using AutoChessEntryFunc for AutoChessEntryFunc.EntryFunc;
     using EnumerableSet for EnumerableSet.UintSet;
@@ -28,6 +29,10 @@ contract GameAutoCheess {
         _holderAddress.add(uint256(uint160(msg.sender)));
     }
 
+    function setCardGroupLength(uint256 _length) public onlyOwner {
+        cardGroupLength = _length;
+    }
+
     function addressCardGroup(address _add)
         public
         view
@@ -45,7 +50,25 @@ contract GameAutoCheess {
         emit updateCardGroup(msg.sender, group);
     }
 
-    function challenge() public {
+    event battleOver(
+        address indexed _winerAddress,
+        address failAddress,
+        uint256 winAddScore
+    );
+
+    function challenge(address toCompetitor) public {
+        require(
+            cardNFT.cardCanUse(msg.sender, _cardGroup[msg.sender]),
+            "card can not use"
+        );
+        require(
+            _holderAddress.contains(uint256(uint160(toCompetitor))),
+            "target does not exist"
+        );
+        uint256[] memory toCompetitorCards = _cardGroup[toCompetitor];
+        if (toCompetitorCards.length == 0) {
+            emit battleOver(msg.sender, toCompetitor, 100);
+        }
         typeFunction.dispatch(1);
     }
 }
