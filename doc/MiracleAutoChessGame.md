@@ -89,7 +89,7 @@ Card entry map
 战略效果 strategy effect  
 1. 摧毁对方一张星级低于此卡的战略卡或奇迹卡
 
-### no.5 复仇
+### no.5 复仇 revenge
   
 单位效果 unit effect
 1. 上升自身星级*1的攻击力和星级*1的生命值 
