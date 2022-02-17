@@ -45,6 +45,10 @@ contract MiracleCard is ERC1155 {
         packTo = payTo;
         payToToken = GamePlusToken(payTo);
         setTrustedAddress(owner());
+        buyerPackUris[0] = "";
+        buyerPackUris[1] = "";
+        buyerPackUris[2] = "";
+        buyerPackUris[3] = "";
     }
 
     function getPayTo() public view returns (address) {
