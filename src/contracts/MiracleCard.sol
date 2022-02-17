@@ -28,16 +28,13 @@ contract MiracleCard is ERC1155 {
     GamePlusToken public payToToken;
 
     // 随机卡包的卡面
-    bytes32[] public randomPackUris;
+    mapping(uint256 => string) public buyerPackUris;
 
     // 创建卡牌得最大星级
     uint256 public maxCardCreateStar = 10;
 
     // 卡包卡最大星级
     uint256 public maxBuyCardStar = 5;
-
-    // 卡包一次数量
-    uint256 public cardPackBuyerNum = 3;
 
     /** @dev Use ERC-1155 metadata standard for your JSON file & use hexadecimal of your token ID in _file_name.json */
 
@@ -47,16 +44,14 @@ contract MiracleCard is ERC1155 {
     {
         packTo = payTo;
         payToToken = GamePlusToken(payTo);
-        _owner = msg.sender;
-        setTrustedAddress(_owner);
+        setTrustedAddress(owner());
     }
 
     function getPayTo() public view returns (address) {
         return packTo;
     }
 
-    function setMiracleDust(address tokenAddress) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setMiracleDust(address tokenAddress) public onlyOwner {
         MiracleDustToken = MiracleDust(tokenAddress);
     }
 
@@ -64,13 +59,11 @@ contract MiracleCard is ERC1155 {
         return address(MiracleDustToken);
     }
 
-    function setCreateCardCast(uint256 _cast) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setCreateCardCast(uint256 _cast) public onlyOwner {
         createCardCast = _cast;
     }
 
-    function setBuyCardPackCast(uint256 _cast) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setBuyCardPackCast(uint256 _cast) public onlyOwner {
         buyCardPackCast = _cast;
     }
 
@@ -99,27 +92,26 @@ contract MiracleCard is ERC1155 {
         return _ownerOf(tokenId);
     }
 
-    function setURI(string memory newuri) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
     }
 
-    function setEntrys(uint256[] memory entrys) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setEntrys(uint256[] memory entrys) public onlyOwner {
         _entrys = entrys;
     }
 
-    function setEntrysLength(uint256 newEntrysLength) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setEntrysLength(uint256 newEntrysLength) public onlyOwner {
         _entrysLength = newEntrysLength;
     }
 
-    function setRandomPackUris(bytes32[] memory randomUris) public {
+    function setRandomPackUris(uint256 cardType, string memory randomUris)
+        public
+    {
         require(
             isTrustedAddress(msg.sender),
             "This method must called by trusted"
         );
-        randomPackUris = randomUris;
+        buyerPackUris[cardType] = randomUris;
     }
 
     function setMaxCardCreateStar(uint256 _max) public {
@@ -138,20 +130,11 @@ contract MiracleCard is ERC1155 {
         maxBuyCardStar = _max;
     }
 
-    function setCardPackBuyerNum(uint256 _num) public {
-        require(
-            isTrustedAddress(msg.sender),
-            "This method must called by trusted"
-        );
-        cardPackBuyerNum = _num;
-    }
-
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    ) public onlyOwner {
         safeTransferFrom(from, to, tokenId, 1, "");
     }
 
@@ -159,6 +142,20 @@ contract MiracleCard is ERC1155 {
         require(msg.value >= buyCardPackCast, "no enough money");
         packTo.transfer(msg.value);
         // TODO 根据所有卡牌类型，随机一张卡
+        for (uint256 index = 1; index < cardMaxType; index++) {
+            uint256[] memory cardTypes = new uint256[](3);
+            cardTypes[0] = index;
+            uint tokenId = nextTokenId();
+            _createCard(
+                msg.sender,
+                tokenId,
+                cardTypes,
+                getRandomCardEntrys(_entrys),
+                buyerPackUris[index],
+                maxCardCreateStar
+            );
+            emit CardCreated(msg.sender, tokenId);
+        }
     }
 
     function getRandomCardEntrys(uint256[] memory cardEntrys)
@@ -189,8 +186,7 @@ contract MiracleCard is ERC1155 {
         uint256 star,
         uint256 dust,
         string memory cardUri
-    ) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    ) public onlyOwner {
         _createCardByOwner(cardTypes, cardEntrys, star, dust, cardUri);
     }
 

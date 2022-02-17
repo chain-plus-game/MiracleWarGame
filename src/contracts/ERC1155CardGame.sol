@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "../abstract/base.sol";
 
 /**
  *
@@ -21,7 +22,13 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
  *
  * _Available since v3.1._
  */
-abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
+abstract contract ERC1155 is
+    Context,
+    ERC165,
+    IERC1155,
+    IERC1155MetadataURI,
+    BaseGame
+{
     using SafeMath for uint256;
     using Address for address;
     using Bytes32 for bytes32;
@@ -42,8 +49,6 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
     uint256 randNonce = 0;
-
-    address _owner = address(0);
 
     uint256 defaultCardDust = 100;
 
@@ -744,13 +749,11 @@ abstract contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         return _trustedAddress[_address];
     }
 
-    function setTrustedAddress(address _address) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function setTrustedAddress(address _address) public onlyOwner {
         _trustedAddress[_address] = true;
     }
 
-    function removeTrustedAddress(address _address) public {
-        require(msg.sender == _owner, "This method must called by owner");
+    function removeTrustedAddress(address _address) public onlyOwner {
         _trustedAddress[_address] = false;
     }
 }

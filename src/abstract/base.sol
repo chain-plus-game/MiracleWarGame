@@ -13,4 +13,8 @@ abstract contract BaseGame {
         require(msg.sender == _owner, "Only owner can call this.");
         _;
     }
+
+    function owner()public view returns(address) {
+        return _owner;
+    }
 }
