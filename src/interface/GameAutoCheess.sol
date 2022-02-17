@@ -20,4 +20,6 @@ interface IGameAutoCheess {
         uint256 failSubScore,
         uint256 failSocreBefore
     );
+
+    event eventStartBattle(address indexed _address,address to);
 }

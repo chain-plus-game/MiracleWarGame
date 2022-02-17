@@ -42,6 +42,7 @@ library AutoChessEntryFunc {
     }
 
     event useCard(address indexed _address, uint256 tokenId);
+    event dispatchFunc(uint256 indexed cardIndex, uint256 entryId);
 
     function dispatch(
         EntryFunc storage funcMap,
@@ -51,13 +52,14 @@ library AutoChessEntryFunc {
         CardInstance[] memory ownerCards,
         CardInstance[] memory otherCards
     ) internal {
-        funcMap.typeFunction[entryId](
-            cardIndex,
-            entryId,
-            pipType,
-            ownerCards,
-            otherCards
-        );
+        emit dispatchFunc(cardIndex, entryId);
+        // funcMap.typeFunction[entryId](
+        //     cardIndex,
+        //     entryId,
+        //     pipType,
+        //     ownerCards,
+        //     otherCards
+        // );
     }
 
     function heroic(

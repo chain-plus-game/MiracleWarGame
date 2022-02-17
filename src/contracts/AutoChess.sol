@@ -52,9 +52,10 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
     }
 
     function setCardGroup(uint256[] memory group) public {
-        require(group.length > cardGroupLength, "can not set group length");
+        require(group.length <= cardGroupLength, "can not set group length");
         require(cardNFT.cardCanUse(msg.sender, group), "card can not use");
         _cardGroup[msg.sender] = group;
+        Authorize();
         emit updateCardGroup(msg.sender, group);
     }
 
@@ -71,9 +72,9 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
         return cardStar;
     }
 
-    function challenge(address toCompetitor) public {
+    function challenge(address toCompetitor) public{
         uint256[] memory ownerCards = _cardGroup[msg.sender];
-        require(ownerCards.length == 0, "card length max than 0");
+        require(ownerCards.length != 0, "card length max than 0");
         require(cardNFT.cardCanUse(msg.sender, ownerCards), "card can not use");
         require(
             _holderAddress.contains(uint256(uint160(toCompetitor))),
@@ -102,6 +103,7 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
             );
             return;
         }
+
         startBattle(ownerCards, toCompetitorCards, toCompetitor);
     }
 
@@ -110,6 +112,7 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
         uint256[] memory otherCards,
         address to
     ) private {
+        emit eventStartBattle(msg.sender,to);
         // 创建对战数据
         AutoChessEntryFunc.CardInstance[]
             memory ownerCardInstaces = new AutoChessEntryFunc.CardInstance[](
