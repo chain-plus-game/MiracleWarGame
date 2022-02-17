@@ -13,6 +13,8 @@ contract GamePlusToken is ERC20 {
     uint256 public DividendNum = 0;
 
     // okt 1个币开始分红
+    // bsc 0.1
+    // eth 0.01
     uint256 public DividendBeginNum = 10**18;
 
     // 这里是构造函数, 实例创建时候执行

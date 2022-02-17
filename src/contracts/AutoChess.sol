@@ -103,12 +103,13 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
             );
             return;
         }
-        startBattle(ownerCards, toCompetitorCards);
+        startBattle(ownerCards, toCompetitorCards, toCompetitor);
     }
 
     function startBattle(
         uint256[] memory ownerCards,
-        uint256[] memory otherCards
+        uint256[] memory otherCards,
+        address to
     ) private {
         // 创建对战数据
         AutoChessEntryFunc.CardInstance[]
@@ -125,12 +126,13 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
         for (uint256 index = 0; index < otherCards.length; index++) {
             otherCardInstaces[index] = createCardInstance(otherCards[index]);
         }
-        AutoChessEntryFunc.fightData
-            memory fight = AutoChessEntryFunc.fightData({
+        AutoChessEntryFunc.fightData memory fight = AutoChessEntryFunc
+            .fightData({
                 ownerCards: ownerCardInstaces,
                 otherCards: otherCardInstaces
             });
-        
+        emit eventInitCardGroup(msg.sender, to, fight);
+        fight.start(typeFunction);
     }
 
     function createCardInstance(uint256 cardId)
