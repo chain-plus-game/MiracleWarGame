@@ -27,3 +27,7 @@ deflation and inflation
 代币的增发根据卡牌NFT的使用量而决定，当NFT与链游的使用量增加时，粉尘代币的流通量也会随着增加。为了维持货币的通胀速度，我们对每一份由卡牌NFT转入的粉尘代币进行1/3的销毁。  
   
 The additional issuance of tokens is determined according to the usage of card NFTs. When the usage of NFTs and chain games increases, the circulation of dust tokens will also increase. In order to maintain the inflation rate of the currency, we burn 1/3 of each dust token transferred from the card NFT.  
+
+## 上链
+
+bsc test 0xEfEE4BaB67aBEc28F062cb7fCafD4CD9a09b26c3
