@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 pragma solidity ^0.8.0;
 
 import "../abstract/base.sol";
 import "../abstract/easyRandom.sol";
-import "./MiracleCard.sol";
 import "../lib/AutoChessEntryFunc.sol";
 import "../interface/GameAutoCheess.sol";
+import "./MiracleCard.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";

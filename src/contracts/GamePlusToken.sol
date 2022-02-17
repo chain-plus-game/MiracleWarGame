@@ -29,6 +29,8 @@ contract GamePlusToken is ERC20 {
         return 10;
     }
 
+    event afterTokenTransfer(address indexed from, uint256 amount);
+
     function _afterTokenTransfer(
         address from,
         address to,
@@ -36,21 +38,33 @@ contract GamePlusToken is ERC20 {
     ) internal override {
         _tokenAddress.add(uint256(uint160(to)));
         emit dividendUserAdd(to);
+        emit afterTokenTransfer(from,amount);
     }
 
-    function poolNum() public view returns(uint256){
+    function poolNum() public view returns (uint256) {
         return address(this).balance;
     }
 
     receive() external payable {}
 
-    event DividendsTo(address indexed toAddress, uint256 dividendsNum,uint256 lastPool);
-    event heldNumEvent(address indexed formAddress,uint256 held);
-    event curBalanceEvent(address indexed formAddress,uint256 dividend,uint256 cur);
+    event DividendsTo(
+        address indexed toAddress,
+        uint256 dividendsNum,
+        uint256 lastPool
+    );
+    event heldNumEvent(address indexed formAddress, uint256 held);
+    event curBalanceEvent(
+        address indexed formAddress,
+        uint256 dividend,
+        uint256 cur
+    );
 
     function TryDividends() public {
         uint256 thisBalance = address(this).balance;
-        require(thisBalance >= DividendBeginNum,"There is not enough money in the current prize pool");
+        require(
+            thisBalance >= DividendBeginNum,
+            "There is not enough money in the current prize pool"
+        );
         uint256 curBalance = thisBalance;
         uint256 totalSupply = totalSupply();
         for (uint256 index = 0; index < _tokenAddress.length(); index++) {
@@ -58,9 +72,9 @@ contract GamePlusToken is ERC20 {
             uint256 heldNum = balanceOf(dividendTo);
             if (heldNum > 0) {
                 uint256 dividendNum = heldNum * (thisBalance / totalSupply);
-                if (dividendNum > 0){
+                if (dividendNum > 0) {
                     emit heldNumEvent(dividendTo, heldNum);
-                    if (curBalance < dividendNum){
+                    if (curBalance < dividendNum) {
                         break;
                     }
                     curBalance -= dividendNum;

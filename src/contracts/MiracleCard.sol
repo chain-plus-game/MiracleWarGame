@@ -356,14 +356,14 @@ contract MiracleCard is ERC1155 {
     {
         for (uint256 index = 0; index < ids.length; index++) {
             (
-                uint256 id,
-                uint256 star,
+                ,
+                ,
                 // 剩余粉尘
                 uint256 tokenVal,
-                uint256[] memory cardType,
+                ,
                 // 词条
-                uint256[] memory cardEntrys,
-                string memory tokenUri,
+                ,
+                ,
                 address cardOwner
             ) = getToken(ids[index]);
             if (cardOwner != fromAddress) {

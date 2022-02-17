@@ -108,3 +108,4 @@ artifacts/
 src/contracts/.deps/
 src/package-lock.json
 src/.deps/*
+src/bin/*
