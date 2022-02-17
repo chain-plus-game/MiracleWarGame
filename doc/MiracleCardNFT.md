@@ -40,3 +40,6 @@ metadata
 1155协议标准json结构,发布到ipfs网络  
 1155 protocol standard json structure, published to ipfs network
 
+## 上链
+
+bsc test 0xc2Ad52d49F086E0772abae762F6255071AA2e1B6

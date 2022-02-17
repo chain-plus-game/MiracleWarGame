@@ -361,7 +361,6 @@ contract MiracleCard is ERC1155 {
                 // 剩余粉尘
                 uint256 tokenVal,
                 ,
-                // 词条
                 ,
                 ,
                 address cardOwner
