@@ -145,8 +145,7 @@ contract MiracleCard is ERC1155 {
     function buyCardPack() public payable {
         require(msg.value >= buyCardPackCast, "no enough money");
         packTo.transfer(msg.value);
-        // TODO 根据所有卡牌类型，随机一张卡
-        for (uint256 index = 1; index < cardMaxType; index++) {
+        for (uint256 index = 1; index <= cardMaxType; index++) {
             uint256[] memory cardTypes = new uint256[](3);
             cardTypes[0] = index;
             uint tokenId = nextTokenId();
@@ -156,7 +155,7 @@ contract MiracleCard is ERC1155 {
                 cardTypes,
                 getRandomCardEntrys(_entrys),
                 buyerPackUris[index],
-                maxCardCreateStar
+                maxBuyCardStar
             );
             emit CardCreated(msg.sender, tokenId);
         }

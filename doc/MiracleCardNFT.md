@@ -42,4 +42,4 @@ metadata
 
 ## 上链
 
-bsc test 0xc2Ad52d49F086E0772abae762F6255071AA2e1B6
+bsc test 0x0c0Dd2e0ba87ed1C4E15861F2232AecfFc467FDb
