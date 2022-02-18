@@ -20,6 +20,7 @@ library AutoChessEntryFunc {
         uint256[] _cardTypes;
         uint256[] _cardEntrys;
         uint256[] _cardAttributes; // 0 攻击，1 生命
+        uint rand;
     }
 
     struct fightData {
@@ -65,7 +66,6 @@ library AutoChessEntryFunc {
     }
 
     event useCard(address indexed _address, uint256 tokenId, uint256 entryId);
-    event dispatchFunc(uint256 indexed cardIndex, uint256 entryId);
 
     function dispatch(
         EntryFunc storage funcMap,
@@ -75,13 +75,14 @@ library AutoChessEntryFunc {
         CardInstance[] memory ownerCards,
         CardInstance[] memory otherCards
     ) internal {
-        emit dispatchFunc(cardIndex, entryId);
         funcStruct memory _func = funcMap.typeFunction[entryId];
         if (_func.isSet) {
             _func._func(cardIndex, entryId, pipType, ownerCards, otherCards);
         }
     }
 
+
+    event heroicEvent(uint indexed cardIndex,CardInstance _card);
     function heroic(
         uint256 cardIndex,
         uint256 entryIndex,
@@ -94,6 +95,25 @@ library AutoChessEntryFunc {
             ownerCards[cardIndex]._id,
             ownerCards[cardIndex]._cardEntrys[entryIndex]
         );
+        uint cardTypesId = ownerCards[cardIndex]._cardTypes[0];
+        if (cardTypesId == 1 && pipType == stage.init){
+            ownerCards[cardIndex]._cardAttributes[0] += ownerCards[cardIndex]._star*2;
+            ownerCards[cardIndex]._cardAttributes[1] += ownerCards[cardIndex]._star;
+        }
+        if (cardTypesId == 2){
+            // 己方所有当前单位上升掷点数值的攻击力
+            uint rand = randomCardStar(6, ownerCards[cardIndex].rand);
+            for (uint256 index = 0; index < ownerCards.length; index++) {
+                ownerCards[index]._cardAttributes[0] += rand;
+            }
+        }
+        if (cardTypesId == 3){
+            // 己方所有单位的防御力上升此卡星级*1的数值
+            for (uint256 index = 0; index < ownerCards.length; index++) {
+                ownerCards[index]._cardAttributes[1] += ownerCards[cardIndex]._star;
+            }
+        }
+        emit heroicEvent(cardIndex,ownerCards[cardIndex]);
     }
 
     event initCardGroupStart(uint8 indexed owner, CardInstance[] cardIndex);
@@ -129,5 +149,22 @@ library AutoChessEntryFunc {
                 );
             }
         }
+    }
+
+    event randomEvent(uint indexed rand);
+    function randomCardStar(uint256 max,uint rand) internal returns (uint256) {
+        uint256 randomHash = uint256(
+            keccak256(
+                abi.encodePacked(
+                    uint256(uint160(msg.sender)),
+                    block.difficulty,
+                    block.timestamp,
+                    rand
+                )
+            )
+        );
+        uint256 num = randomHash % max;
+        emit randomEvent(num);
+        return num;
     }
 }
