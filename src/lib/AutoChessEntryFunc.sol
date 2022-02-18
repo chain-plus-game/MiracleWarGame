@@ -27,21 +27,44 @@ library AutoChessEntryFunc {
         CardInstance[] otherCards;
     }
 
-    struct EntryFunc {
-        mapping(uint256 => function(
+    struct funcStruct {
+        bool isSet;
+        function(
             uint256,
             uint256,
             stage,
             CardInstance[] memory,
             CardInstance[] memory
-        )) typeFunction;
+        ) _func;
+    }
+
+    struct EntryFunc {
+        mapping(uint256 => funcStruct) typeFunction;
+    }
+
+    function addHander(
+        EntryFunc storage map,
+        uint256 index,
+        function(
+            uint256,
+            uint256,
+            stage,
+            CardInstance[] memory,
+            CardInstance[] memory
+        ) callBack
+    ) private {
+        map.typeFunction[index] = funcStruct({isSet: true, _func: callBack});
     }
 
     function init(EntryFunc storage map) internal {
-        map.typeFunction[1] = heroic;
+        addHander(map, 1, heroic);
+        addHander(map, 2, heroic);
+        addHander(map, 3, heroic);
+        addHander(map, 4, heroic);
+        addHander(map, 5, heroic);
     }
 
-    event useCard(address indexed _address, uint256 tokenId);
+    event useCard(address indexed _address, uint256 tokenId, uint256 entryId);
     event dispatchFunc(uint256 indexed cardIndex, uint256 entryId);
 
     function dispatch(
@@ -53,13 +76,10 @@ library AutoChessEntryFunc {
         CardInstance[] memory otherCards
     ) internal {
         emit dispatchFunc(cardIndex, entryId);
-        // funcMap.typeFunction[entryId](
-        //     cardIndex,
-        //     entryId,
-        //     pipType,
-        //     ownerCards,
-        //     otherCards
-        // );
+        funcStruct memory _func = funcMap.typeFunction[entryId];
+        if (_func.isSet) {
+            _func._func(cardIndex, entryId, pipType, ownerCards, otherCards);
+        }
     }
 
     function heroic(
@@ -69,7 +89,11 @@ library AutoChessEntryFunc {
         CardInstance[] memory ownerCards,
         CardInstance[] memory otherCards
     ) private {
-        // emit useCard(msg.sender, index);
+        emit useCard(
+            msg.sender,
+            ownerCards[cardIndex]._id,
+            ownerCards[cardIndex]._cardEntrys[entryIndex]
+        );
     }
 
     event initCardGroupStart(uint8 indexed owner, CardInstance[] cardIndex);
