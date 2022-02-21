@@ -21,7 +21,7 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
 
     constructor() {
         _funcMap.addHander(1, heroic);
-        _funcMap.addHander(2, heroic);
+        _funcMap.addHander(2, charge);
         _funcMap.addHander(3, heroic);
         _funcMap.addHander(4, heroic);
         _funcMap.addHander(5, heroic);
@@ -76,7 +76,13 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
             roundNum += 1;
             emit eventRoundEnds(roundNum, _fight.ownerCards, _fight.otherCards);
         }
-        return 0;
+        if (winner == GameState.ownerWiner) {
+            return 0;
+        }
+        if (winner == GameState.targetWiner) {
+            return 1;
+        }
+        return 2;
     }
 
     function clickOver(AutoChessEntryFunc.fightData memory _fight)
@@ -128,7 +134,9 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                 ._star;
         }
         if (cardTypesId == 1 && pipType == AutoChessEntryFunc.stage.fighting2) {
+            // 额外追加一次攻击
             _funcMap.doFightingOne(cardIndex, ownerCards, otherCards);
+            emit chargeEvent(cardIndex, ownerCards[cardIndex]);
         }
         if (cardTypesId == 2) {
             // 点数>3时，使生命值最高的友军对生命值最低的敌军进行一次攻击
@@ -137,19 +145,54 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                 uint256 max = 0;
                 uint256 maxIndex = 0;
                 for (uint256 index = 0; index < ownerCards.length; index++) {
-                    if (ownerCards[index]._cardAttributes[1] > max) {
+                    if (
+                        ownerCards[index]._cardAttributes[1] > max &&
+                        !ownerCards[index]._isDestory
+                    ) {
                         max = ownerCards[index]._cardAttributes[1];
                         maxIndex = index;
                     }
                 }
+                if (max == 0) {
+                    return;
+                }
+                uint256 low = 999999;
+                uint256 lowIndex = 9999;
+                for (uint8 index = 0; index < otherCards.length; index++) {
+                    if (
+                        otherCards[index]._cardAttributes[1] < low &&
+                        !otherCards[index]._isDestory
+                    ) {
+                        low = otherCards[index]._cardAttributes[1];
+                        lowIndex = index;
+                    }
+                }
+                if (lowIndex == 9999) return;
+                _funcMap.doFightingTo(
+                    maxIndex,
+                    lowIndex,
+                    ownerCards,
+                    otherCards
+                );
+                emit chargeEvent(cardIndex, ownerCards[cardIndex]);
             }
         }
         if (cardTypesId == 3) {
-            // 己方所有单位的防御力上升此卡星级*1的数值
-            for (uint256 index = 0; index < ownerCards.length; index++) {
-                ownerCards[index]._cardAttributes[1] += ownerCards[cardIndex]
-                    ._star;
+            // 对对方所有单位造成此卡星级*1的伤害
+            for (uint8 index = 0; index < otherCards.length; index++) {
+                if (
+                    otherCards[index]._cardTypes[0] == 1 &&
+                    !otherCards[index]._isDestory
+                ) {
+                    _funcMap.doFightingTo(
+                        cardIndex,
+                        index,
+                        ownerCards,
+                        otherCards
+                    );
+                }
             }
+            emit chargeEvent(cardIndex, ownerCards[cardIndex]);
         }
     }
 

@@ -56,7 +56,10 @@ library AutoChessEntryFunc {
             uint256
         ) callBack
     ) internal {
-        funcMap._typeFunction[index] = AutoChessEntryFunc.funcStruct({isSet: true, _func: callBack});
+        funcMap._typeFunction[index] = AutoChessEntryFunc.funcStruct({
+            isSet: true,
+            _func: callBack
+        });
     }
 
     function dispatch(
@@ -81,6 +84,49 @@ library AutoChessEntryFunc {
         }
     }
 
+    function doFightingTo(
+        EntryFunc storage funcMap,
+        uint256 ownerCardIndex,
+        uint256 otherCardIndex,
+        CardInstance[] memory ownerCards,
+        CardInstance[] memory otherCards
+    ) internal {
+        if (otherCards[otherCardIndex]._cardTypes[0] == 0 && !otherCards[otherCardIndex]._isDestory) {
+            for (uint8 e = 0; e < otherCards[otherCardIndex]._cardEntrys.length; e++) {
+                dispatch(
+                    funcMap,
+                    otherCardIndex,
+                    e,
+                    stage.fighting1,
+                    ownerCards,
+                    otherCards,
+                    ownerCards[ownerCardIndex]._cardAttributes[0]
+                );
+                if (
+                    otherCards[otherCardIndex]._cardAttributes[1] >=
+                    ownerCards[ownerCardIndex]._cardAttributes[0]
+                ) {
+                    otherCards[otherCardIndex]._cardAttributes[1] -= ownerCards[
+                        ownerCardIndex
+                    ]._cardAttributes[0];
+                } else {
+                    otherCards[otherCardIndex]._cardAttributes[1] = 0;
+                    otherCards[otherCardIndex]._isDestory = true;
+                }
+                dispatch(
+                    funcMap,
+                    otherCardIndex,
+                    e,
+                    stage.fighting2,
+                    ownerCards,
+                    otherCards,
+                    ownerCards[ownerCardIndex]._cardAttributes[0]
+                );
+            }
+            return;
+        }
+    }
+
     function doFightingOne(
         EntryFunc storage funcMap,
         uint256 ownerCardIndex,
@@ -88,40 +134,7 @@ library AutoChessEntryFunc {
         CardInstance[] memory otherCards
     ) internal {
         for (uint256 j = 0; j < otherCards.length; j++) {
-            if (otherCards[j]._cardTypes[0] == 0 && !otherCards[j]._isDestory) {
-                for (uint8 e = 0; e < otherCards[j]._cardEntrys.length; e++) {
-                    dispatch(
-                        funcMap,
-                        j,
-                        e,
-                        stage.fighting1,
-                        ownerCards,
-                        otherCards,
-                        ownerCards[ownerCardIndex]._cardAttributes[0]
-                    );
-                    if (
-                        otherCards[j]._cardAttributes[1] >=
-                        ownerCards[ownerCardIndex]._cardAttributes[0]
-                    ) {
-                        otherCards[j]._cardAttributes[1] -= ownerCards[
-                            ownerCardIndex
-                        ]._cardAttributes[0];
-                    } else {
-                        otherCards[j]._cardAttributes[1] = 0;
-                        otherCards[j]._isDestory = true;
-                    }
-                    dispatch(
-                        funcMap,
-                        j,
-                        e,
-                        stage.fighting2,
-                        ownerCards,
-                        otherCards,
-                        ownerCards[ownerCardIndex]._cardAttributes[0]
-                    );
-                }
-                break;
-            }
+            doFightingTo(funcMap,ownerCardIndex,j,ownerCards,otherCards);
         }
     }
 

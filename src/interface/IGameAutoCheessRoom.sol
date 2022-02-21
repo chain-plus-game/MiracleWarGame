@@ -21,4 +21,9 @@ interface IGameAutoCheessRoom {
         uint256 indexed cardIndex,
         AutoChessEntryFunc.CardInstance _card
     );
+
+    event chargeEvent(
+        uint256 indexed cardIndex,
+        AutoChessEntryFunc.CardInstance _card
+    );
 }

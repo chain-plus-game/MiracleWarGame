@@ -4,8 +4,10 @@ pragma solidity ^0.8.0;
 abstract contract EasyRandom {
     uint256 randNonce = 0;
 
+    event beginRandom(uint256 indexed max);
     event randomEvent(uint256 indexed rand);
     function random(uint256 max) internal returns (uint256) {
+        emit beginRandom(max);
         uint256 randomHash = uint256(
             keccak256(
                 abi.encodePacked(
