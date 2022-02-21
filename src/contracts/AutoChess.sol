@@ -6,19 +6,18 @@ import "../abstract/easyRandom.sol";
 import "../lib/AutoChessEntryFunc.sol";
 import "../interface/GameAutoCheess.sol";
 import "./MiracleCard.sol";
+import "./gameRoom/GameAutoCheessRoom.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
     using SafeMath for uint256;
-    using AutoChessEntryFunc for AutoChessEntryFunc.EntryFunc;
     using AutoChessEntryFunc for AutoChessEntryFunc.fightData;
     using AutoChessEntryFunc for AutoChessEntryFunc.CardInstance;
 
     using EnumerableSet for EnumerableSet.UintSet;
     MiracleCard public cardNFT;
-    AutoChessEntryFunc.EntryFunc private typeFunction;
     EnumerableSet.UintSet private _holderAddress;
 
     uint256 public cardGroupLength = 5;
@@ -26,9 +25,10 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
 
     mapping(address => uint256) private _playerScore;
 
+    GameAutoCheessRoom private figthRoom = new GameAutoCheessRoom();
+
     constructor(address card) {
         cardNFT = MiracleCard(card);
-        typeFunction.init();
     }
 
     function getPlayerScore(address _add) public view returns (uint256) {
@@ -72,7 +72,7 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
         return cardStar;
     }
 
-    function challenge(address toCompetitor) public{
+    function challenge(address toCompetitor) public {
         uint256[] memory ownerCards = _cardGroup[msg.sender];
         require(ownerCards.length != 0, "card length max than 0");
         require(cardNFT.cardCanUse(msg.sender, ownerCards), "card can not use");
@@ -112,7 +112,7 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
         uint256[] memory otherCards,
         address to
     ) private {
-        emit eventStartBattle(msg.sender,to);
+        emit eventStartBattle(msg.sender, to);
         // 创建对战数据
         AutoChessEntryFunc.CardInstance[]
             memory ownerCardInstaces = new AutoChessEntryFunc.CardInstance[](
@@ -134,7 +134,30 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
                 otherCards: otherCardInstaces
             });
         emit eventInitCardGroup(msg.sender, to, fight);
-        fight.start(typeFunction);
+        uint8 winner = figthRoom.start(fight);
+        // 0 己方胜利，1对方胜利,2平局
+        address addTo = msg.sender;
+        address toSub = to;
+        if (winner == 1) {
+            addTo = to;
+            toSub = msg.sender;
+        }
+        uint256 subScore = _playerScore[toSub];
+        uint256 sub = getCardsStar(ownerCards);
+        (, uint256 newScore) = subScore.trySub(sub);
+        _playerScore[toSub] = newScore;
+        uint256 selfScore = _playerScore[addTo];
+        uint256 addScore = getCardsStar(otherCards);
+        (, uint256 newSelfScore) = selfScore.tryAdd(addScore);
+        _playerScore[addTo] = newSelfScore;
+        emit battleOver(
+            msg.sender,
+            to,
+            addScore,
+            selfScore,
+            sub,
+            subScore
+        );
     }
 
     function createCardInstance(uint256 cardId)
@@ -163,7 +186,8 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
                 _star: star,
                 _cardTypes: cardType,
                 _cardEntrys: cardEntrys,
-                _cardAttributes: attributes // 0 攻击，1 生命
+                _cardAttributes: attributes, // 0 攻击，1 生命
+                _isDestory: false
             });
         return instance;
     }
