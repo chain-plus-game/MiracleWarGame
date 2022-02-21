@@ -41,6 +41,7 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                 _funcMap.dispatch(
                     index,
                     entryId,
+                    0,
                     AutoChessEntryFunc.stage.init,
                     ownerCards,
                     otherCards,
@@ -117,6 +118,64 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
         return GameState.running;
     }
 
+    function crush(
+        uint256 cardIndex,
+        uint256 otherCardIndex,
+        AutoChessEntryFunc.stage pipType,
+        AutoChessEntryFunc.CardInstance[] memory ownerCards,
+        AutoChessEntryFunc.CardInstance[] memory otherCards,
+        uint256 harm
+    ) private {
+        uint256 cardTypesId = ownerCards[cardIndex]._cardTypes[0];
+        if (cardTypesId == 1 && pipType == AutoChessEntryFunc.stage.init) {
+            ownerCards[cardIndex]._cardAttributes[0] +=
+                ownerCards[cardIndex]._star *
+                1;
+            ownerCards[cardIndex]._cardAttributes[1] += ownerCards[cardIndex]
+                ._star;
+            return;
+        }
+        if (cardTypesId == 1 && pipType == AutoChessEntryFunc.stage.fighting1) {
+            // 击破一个敌方单位时进行一次掷点，对下一个攻击单位造成点数伤害
+            if (otherCards[otherCardIndex]._cardAttributes[1] > harm) return;
+            if (otherCardIndex == (otherCards.length - 1)) return;
+            for (
+                uint256 index = otherCardIndex + 1;
+                index < otherCards.length;
+                index++
+            ) {
+                if (otherCards[index]._cardTypes[0] == 1) {
+                    uint256 rand = random(6);
+                    ownerCards[cardIndex]._cardAttributes[0] = rand;
+                    _funcMap.doFightingTo(
+                        cardIndex,
+                        index,
+                        ownerCards,
+                        otherCards
+                    );
+                }
+            }
+            return;
+        }
+        if (cardTypesId == 2 && pipType == AutoChessEntryFunc.stage.fighting1) {
+            // 摧毁对方一张星级不高于造成掷点点数+卡牌星级的奇迹卡或战略卡
+            uint256 rand = random(6);
+            for (uint8 index = 0; index < otherCards.length; index++) {
+                if (otherCards[index]._cardTypes[0] == 1) continue;
+                if (otherCards[index]._star > (rand+otherCards[index]._star)) continue;
+                for (uint256 eIndex = 0; eIndex < otherCards[index]._cardEntrys.length; eIndex++) {
+                    _funcMap.dispatch(cardIndex, eIndex, index, AutoChessEntryFunc.stage.destory, ownerCards, otherCards, 0);
+                }
+                return;
+            }
+        }
+        if (cardTypesId == 3 && pipType == AutoChessEntryFunc.stage.destory) {
+            // 当己方卡组中单位被摧毁时，给予对方一个单位造成此卡星级*2的伤害，此效果只会触发一次
+            if (ownerCards[cardIndex]._isEffects) return;
+
+        }
+    }
+
     function charge(
         uint256 cardIndex,
         uint256,
@@ -184,6 +243,7 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                     otherCards[index]._cardTypes[0] == 1 &&
                     !otherCards[index]._isDestory
                 ) {
+                    ownerCards[cardIndex]._cardAttributes[0] = ownerCards[cardIndex]._star;
                     _funcMap.doFightingTo(
                         cardIndex,
                         index,

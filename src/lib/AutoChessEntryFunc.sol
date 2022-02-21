@@ -10,6 +10,8 @@ library AutoChessEntryFunc {
         init,
         fighting1,
         fighting2,
+        onHit,
+        destory,
         ending
     }
 
@@ -66,6 +68,7 @@ library AutoChessEntryFunc {
         EntryFunc storage funcMap,
         uint256 cardIndex,
         uint256 entryId,
+        uint256 targetCardIndex,
         stage pipType,
         CardInstance[] memory ownerCards,
         CardInstance[] memory otherCards,
@@ -75,7 +78,7 @@ library AutoChessEntryFunc {
         if (_func.isSet) {
             _func._func(
                 cardIndex,
-                entryId,
+                targetCardIndex,
                 pipType,
                 ownerCards,
                 otherCards,
@@ -91,13 +94,31 @@ library AutoChessEntryFunc {
         CardInstance[] memory ownerCards,
         CardInstance[] memory otherCards
     ) internal {
-        if (otherCards[otherCardIndex]._cardTypes[0] == 0 && !otherCards[otherCardIndex]._isDestory) {
-            for (uint8 e = 0; e < otherCards[otherCardIndex]._cardEntrys.length; e++) {
+        if (
+            otherCards[otherCardIndex]._cardTypes[0] == 0 &&
+            !otherCards[otherCardIndex]._isDestory
+        ) {
+            for (
+                uint8 e = 0;
+                e < otherCards[otherCardIndex]._cardEntrys.length;
+                e++
+            ) {
                 dispatch(
                     funcMap,
                     otherCardIndex,
                     e,
+                    otherCardIndex,
                     stage.fighting1,
+                    ownerCards,
+                    otherCards,
+                    ownerCards[ownerCardIndex]._cardAttributes[0]
+                );
+                dispatch(
+                    funcMap,
+                    otherCardIndex,
+                    e,
+                    otherCardIndex,
+                    stage.onHit,
                     ownerCards,
                     otherCards,
                     ownerCards[ownerCardIndex]._cardAttributes[0]
@@ -109,19 +130,30 @@ library AutoChessEntryFunc {
                     otherCards[otherCardIndex]._cardAttributes[1] -= ownerCards[
                         ownerCardIndex
                     ]._cardAttributes[0];
+                    dispatch(
+                        funcMap,
+                        otherCardIndex,
+                        e,
+                        otherCardIndex,
+                        stage.fighting2,
+                        ownerCards,
+                        otherCards,
+                        ownerCards[ownerCardIndex]._cardAttributes[0]
+                    );
                 } else {
                     otherCards[otherCardIndex]._cardAttributes[1] = 0;
                     otherCards[otherCardIndex]._isDestory = true;
+                    dispatch(
+                        funcMap,
+                        otherCardIndex,
+                        e,
+                        otherCardIndex,
+                        stage.destory,
+                        ownerCards,
+                        otherCards,
+                        ownerCards[ownerCardIndex]._cardAttributes[0]
+                    );
                 }
-                dispatch(
-                    funcMap,
-                    otherCardIndex,
-                    e,
-                    stage.fighting2,
-                    ownerCards,
-                    otherCards,
-                    ownerCards[ownerCardIndex]._cardAttributes[0]
-                );
             }
             return;
         }
@@ -134,7 +166,7 @@ library AutoChessEntryFunc {
         CardInstance[] memory otherCards
     ) internal {
         for (uint256 j = 0; j < otherCards.length; j++) {
-            doFightingTo(funcMap,ownerCardIndex,j,ownerCards,otherCards);
+            doFightingTo(funcMap, ownerCardIndex, j, ownerCards, otherCards);
         }
     }
 
