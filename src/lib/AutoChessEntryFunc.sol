@@ -12,6 +12,7 @@ library AutoChessEntryFunc {
         fighting2,
         onHit,
         destory,
+        effect,
         ending
     }
 
@@ -87,76 +88,96 @@ library AutoChessEntryFunc {
         }
     }
 
+    function dispatchAllFight(
+        EntryFunc storage funcMap,
+        uint256 ownerCardIndex,
+        uint256 otherCardIndex,
+        CardInstance[] memory ownerCards,
+        CardInstance[] memory otherCards,
+        stage pipTyle,
+        uint256 harm
+    ) internal {
+        for (uint256 index = 0; index < ownerCards.length; index++) {
+            for (uint256 j = 0; j < ownerCards[index]._cardEntrys.length; j++) {
+                dispatch(
+                    funcMap,
+                    index,
+                    ownerCards[index]._cardEntrys[j],
+                    otherCardIndex,
+                    pipTyle,
+                    ownerCards,
+                    otherCards,
+                    harm
+                );
+            }
+        }
+        for (uint256 index = 0; index < otherCards.length; index++) {
+            for (uint256 j = 0; j < otherCards[index]._cardEntrys.length; j++) {
+                dispatch(
+                    funcMap,
+                    index,
+                    otherCards[index]._cardEntrys[j],
+                    ownerCardIndex,
+                    pipTyle,
+                    otherCards,
+                    ownerCards,
+                    harm
+                );
+            }
+        }
+    }
+
     function doFightingTo(
         EntryFunc storage funcMap,
         uint256 ownerCardIndex,
         uint256 otherCardIndex,
         CardInstance[] memory ownerCards,
-        CardInstance[] memory otherCards
+        CardInstance[] memory otherCards,
+        stage pipTyle
     ) internal {
-        if (
-            otherCards[otherCardIndex]._cardTypes[0] == 0 &&
-            !otherCards[otherCardIndex]._isDestory
-        ) {
-            for (
-                uint8 e = 0;
-                e < otherCards[otherCardIndex]._cardEntrys.length;
-                e++
-            ) {
-                dispatch(
-                    funcMap,
-                    otherCardIndex,
-                    e,
-                    otherCardIndex,
-                    stage.fighting1,
-                    ownerCards,
-                    otherCards,
-                    ownerCards[ownerCardIndex]._cardAttributes[0]
-                );
-                dispatch(
-                    funcMap,
-                    otherCardIndex,
-                    e,
-                    otherCardIndex,
-                    stage.onHit,
-                    ownerCards,
-                    otherCards,
-                    ownerCards[ownerCardIndex]._cardAttributes[0]
-                );
-                if (
-                    otherCards[otherCardIndex]._cardAttributes[1] >=
-                    ownerCards[ownerCardIndex]._cardAttributes[0]
-                ) {
-                    otherCards[otherCardIndex]._cardAttributes[1] -= ownerCards[
-                        ownerCardIndex
-                    ]._cardAttributes[0];
-                    dispatch(
-                        funcMap,
-                        otherCardIndex,
-                        e,
-                        otherCardIndex,
-                        stage.fighting2,
-                        ownerCards,
-                        otherCards,
-                        ownerCards[ownerCardIndex]._cardAttributes[0]
-                    );
-                } else {
-                    otherCards[otherCardIndex]._cardAttributes[1] = 0;
-                    otherCards[otherCardIndex]._isDestory = true;
-                    dispatch(
-                        funcMap,
-                        otherCardIndex,
-                        e,
-                        otherCardIndex,
-                        stage.destory,
-                        ownerCards,
-                        otherCards,
-                        ownerCards[ownerCardIndex]._cardAttributes[0]
-                    );
-                }
-            }
+        if (otherCards[otherCardIndex]._isDestory) return;
+        if (otherCards[otherCardIndex]._cardTypes[0] != 0) {
+            otherCards[otherCardIndex]._isDestory = true;
+            dispatchAllFight(
+                funcMap,
+                ownerCardIndex,
+                otherCardIndex,
+                ownerCards,
+                otherCards,
+                stage.destory,
+                ownerCards[ownerCardIndex]._cardAttributes[0]
+            );
             return;
         }
+        if (
+            otherCards[otherCardIndex]._cardAttributes[1] >
+            ownerCards[ownerCardIndex]._cardAttributes[0]
+        ) {
+            otherCards[otherCardIndex]._cardAttributes[1] -= ownerCards[
+                ownerCardIndex
+            ]._cardAttributes[0];
+            dispatchAllFight(
+                funcMap,
+                ownerCardIndex,
+                otherCardIndex,
+                ownerCards,
+                otherCards,
+                pipTyle,
+                ownerCards[ownerCardIndex]._cardAttributes[0]
+            );
+            return;
+        }
+        otherCards[otherCardIndex]._cardAttributes[1] = 0;
+        otherCards[otherCardIndex]._isDestory = true;
+        dispatchAllFight(
+            funcMap,
+            ownerCardIndex,
+            otherCardIndex,
+            ownerCards,
+            otherCards,
+            stage.destory,
+            ownerCards[ownerCardIndex]._cardAttributes[0]
+        );
     }
 
     function doFightingOne(
@@ -166,7 +187,14 @@ library AutoChessEntryFunc {
         CardInstance[] memory otherCards
     ) internal {
         for (uint256 j = 0; j < otherCards.length; j++) {
-            doFightingTo(funcMap, ownerCardIndex, j, ownerCards, otherCards);
+            doFightingTo(
+                funcMap,
+                ownerCardIndex,
+                j,
+                ownerCards,
+                otherCards,
+                stage.fighting1
+            );
         }
     }
 

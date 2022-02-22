@@ -151,7 +151,8 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                         cardIndex,
                         index,
                         ownerCards,
-                        otherCards
+                        otherCards,
+                        AutoChessEntryFunc.stage.effect
                     );
                 }
             }
@@ -162,17 +163,39 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
             uint256 rand = random(6);
             for (uint8 index = 0; index < otherCards.length; index++) {
                 if (otherCards[index]._cardTypes[0] == 1) continue;
-                if (otherCards[index]._star > (rand+otherCards[index]._star)) continue;
-                for (uint256 eIndex = 0; eIndex < otherCards[index]._cardEntrys.length; eIndex++) {
-                    _funcMap.dispatch(cardIndex, eIndex, index, AutoChessEntryFunc.stage.destory, ownerCards, otherCards, 0);
-                }
+                if (otherCards[index]._star > (rand + otherCards[index]._star))
+                    continue;
+                _funcMap.doFightingTo(
+                    cardIndex,
+                    index,
+                    ownerCards,
+                    otherCards,
+                    AutoChessEntryFunc.stage.effect
+                );
                 return;
             }
         }
         if (cardTypesId == 3 && pipType == AutoChessEntryFunc.stage.destory) {
             // 当己方卡组中单位被摧毁时，给予对方一个单位造成此卡星级*2的伤害，此效果只会触发一次
             if (ownerCards[cardIndex]._isEffects) return;
-
+            ownerCards[cardIndex]._isEffects = true;
+            ownerCards[cardIndex]._cardAttributes[0] =
+                ownerCards[cardIndex]._star *
+                2;
+            for (uint8 index = 0; index < otherCards.length; index++) {
+                if (
+                    otherCards[index]._cardTypes[0] == 1 &&
+                    !otherCards[index]._isDestory
+                ) {
+                    _funcMap.doFightingTo(
+                        cardIndex,
+                        index,
+                        ownerCards,
+                        otherCards,
+                        AutoChessEntryFunc.stage.effect
+                    );
+                }
+            }
         }
     }
 
@@ -231,7 +254,8 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                     maxIndex,
                     lowIndex,
                     ownerCards,
-                    otherCards
+                    otherCards,
+                    AutoChessEntryFunc.stage.effect
                 );
                 emit chargeEvent(cardIndex, ownerCards[cardIndex]);
             }
@@ -243,12 +267,15 @@ contract GameAutoCheessRoom is EasyRandom, IGameAutoCheessRoom {
                     otherCards[index]._cardTypes[0] == 1 &&
                     !otherCards[index]._isDestory
                 ) {
-                    ownerCards[cardIndex]._cardAttributes[0] = ownerCards[cardIndex]._star;
+                    ownerCards[cardIndex]._cardAttributes[0] = ownerCards[
+                        cardIndex
+                    ]._star;
                     _funcMap.doFightingTo(
                         cardIndex,
                         index,
                         ownerCards,
-                        otherCards
+                        otherCards,
+                        AutoChessEntryFunc.stage.effect
                     );
                 }
             }
