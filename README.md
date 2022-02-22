@@ -9,8 +9,8 @@ Miracle War is a chain game based on NFT and supplemented by token governance. O
 - **Unique NFT Cards**
 - **通过游戏设计来控制数值平衡和经济平衡**
 - **Control numerical balance and economic balance through game design**
-- **完全去中心化，所有逻辑均由链上合约进行确认，没有中心化服务器**
-- **Completely decentralized, all logic is confirmed by on-chain contracts, no centralized server**
+- **开源服务器，由于链上gas限制，复杂的游戏内容无法保证完全的去中心化，但我们会将代码开源**
+- **Open source server, due to the gas limit on the chain, the complex game content cannot guarantee complete decentralization, but we will open source the code**
 - **在架构设计上，数据与逻辑分离与合约授权，鼓励社区根据数据结构创建出不同的游戏模块，我们期望最终可以拥有一个奇迹宇宙**
 - **In terms of architectural design, data and logic are separated and contract authorization is encouraged. The community is encouraged to create different game modules based on the data structure. We hope that we can eventually have a Marvel Universe.**
 
