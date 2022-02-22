@@ -6,7 +6,6 @@ import "../abstract/easyRandom.sol";
 import "../lib/AutoChessEntryFunc.sol";
 import "../interface/GameAutoCheess.sol";
 import "./MiracleCard.sol";
-import "./gameRoom/GameAutoCheessRoom.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -24,8 +23,6 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
     mapping(address => uint256[]) private _cardGroup;
 
     mapping(address => uint256) private _playerScore;
-
-    GameAutoCheessRoom private figthRoom = new GameAutoCheessRoom();
 
     constructor(address card) {
         cardNFT = MiracleCard(card);
@@ -103,62 +100,8 @@ contract GameAutoCheess is BaseGame, EasyRandom, IGameAutoCheess {
             );
             return;
         }
-
-        startBattle(ownerCards, toCompetitorCards, toCompetitor);
     }
 
-    function startBattle(
-        uint256[] memory ownerCards,
-        uint256[] memory otherCards,
-        address to
-    ) private {
-        emit eventStartBattle(msg.sender, to);
-        // 创建对战数据
-        AutoChessEntryFunc.CardInstance[]
-            memory ownerCardInstaces = new AutoChessEntryFunc.CardInstance[](
-                ownerCards.length
-            );
-        AutoChessEntryFunc.CardInstance[]
-            memory otherCardInstaces = new AutoChessEntryFunc.CardInstance[](
-                otherCards.length
-            );
-        for (uint256 index = 0; index < ownerCards.length; index++) {
-            ownerCardInstaces[index] = createCardInstance(ownerCards[index]);
-        }
-        for (uint256 index = 0; index < otherCards.length; index++) {
-            otherCardInstaces[index] = createCardInstance(otherCards[index]);
-        }
-        AutoChessEntryFunc.fightData memory fight = AutoChessEntryFunc
-            .fightData({
-                ownerCards: ownerCardInstaces,
-                otherCards: otherCardInstaces
-            });
-        emit eventInitCardGroup(msg.sender, to, fight);
-        uint8 winner = figthRoom.start(fight);
-        // 0 己方胜利，1对方胜利,2平局
-        address addTo = msg.sender;
-        address toSub = to;
-        if (winner == 1) {
-            addTo = to;
-            toSub = msg.sender;
-        }
-        uint256 subScore = _playerScore[toSub];
-        uint256 sub = getCardsStar(ownerCards);
-        (, uint256 newScore) = subScore.trySub(sub);
-        _playerScore[toSub] = newScore;
-        uint256 selfScore = _playerScore[addTo];
-        uint256 addScore = getCardsStar(otherCards);
-        (, uint256 newSelfScore) = selfScore.tryAdd(addScore);
-        _playerScore[addTo] = newSelfScore;
-        emit battleOver(
-            msg.sender,
-            to,
-            addScore,
-            selfScore,
-            sub,
-            subScore
-        );
-    }
 
     function createCardInstance(uint256 cardId)
         private
